@@ -32,7 +32,7 @@ A platform for managing condominiums and buildings, including features such as c
 
 ## RNFs (Non-Functional Requirements)
 - [ ] User passwords must be encrypted
-- [ ] Application data must be persisted in a NoSQL database (e.g., MongoDB)
+- [ ] Application data must be persisted in PostgreSQL
 - [ ] All data lists (users, reservations, votes) must be paginated with 20 items per page
 - [ ] The system must use authentication via JWT (JSON Web Token)
 - [ ] The system must be responsive and optimized for various devices (desktop, tablet, mobile)
