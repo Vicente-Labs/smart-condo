@@ -2,6 +2,7 @@ import { createId } from '@paralleldrive/cuid2'
 import { relations } from 'drizzle-orm'
 import { boolean, integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 
+import { bookings } from './bookings'
 import { condominiums } from './condominiums'
 
 export const commonSpaces = pgTable('common_spaces', {
@@ -23,9 +24,13 @@ export const commonSpaces = pgTable('common_spaces', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
 })
 
-export const commonSpacesRelations = relations(commonSpaces, ({ one }) => ({
-  condominium: one(condominiums, {
-    fields: [commonSpaces.id],
-    references: [condominiums.id],
+export const commonSpacesRelations = relations(
+  commonSpaces,
+  ({ one, many }) => ({
+    condominium: one(condominiums, {
+      fields: [commonSpaces.id],
+      references: [condominiums.id],
+    }),
+    bookings: many(bookings),
   }),
-}))
+)

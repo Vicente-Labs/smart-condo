@@ -3,6 +3,7 @@ import { relations } from 'drizzle-orm'
 import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 
 import { announcements } from './announcements'
+import { bookings } from './bookings'
 import { commonSpaces } from './common-spaces'
 import { invites } from './invites'
 import { users } from './users'
@@ -35,5 +36,6 @@ export const condominiumsRelations = relations(
     invites: many(invites),
     commonSpaces: many(commonSpaces),
     announcements: many(announcements),
+    bookings: many(bookings),
   }),
 )
