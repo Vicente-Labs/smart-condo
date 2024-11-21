@@ -6,28 +6,28 @@
       "idx": 0,
       "version": "7",
       "when": 1732226425981,
-      "tag": "20241121220025_add-base-db-structure",
+      "tag": "20241121220025_add_base_db_structure",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
       "when": 1732226465138,
-      "tag": "20241121220105_add-common-spaces",
+      "tag": "20241121220105_add_common_spaces",
       "breakpoints": true
     },
     {
       "idx": 2,
       "version": "7",
       "when": 1732226699411,
-      "tag": "20241121220459_add-announcements",
+      "tag": "20241121220459_add_announcements",
       "breakpoints": true
     },
     {
       "idx": 3,
       "version": "7",
       "when": 1732227950594,
-      "tag": "20241121222550_add-condominiun-residents-and-bookings",
+      "tag": "20241121222550_add_condominiun_residents_and_bookings",
       "breakpoints": true
     }
   ]
