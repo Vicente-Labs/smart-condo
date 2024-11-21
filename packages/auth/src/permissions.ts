@@ -15,13 +15,13 @@ export const permissions: Record<Role, PermissionsByRole> = {
   },
   MEMBER: (user, { can }) => {
     can(['create'], 'condominium')
-    can('get', 'condominium', { isMember: { $eq: true } })
+    can('get', 'condominium', { isCondominiumResident: { $eq: true } })
     can(['update', 'delete'], 'condominium', { ownerId: { $eq: user.id } })
     can(['get', 'book'], 'common_spaces', {
       isCondominiumResident: { $eq: true },
     })
-    can(['get', 'create'], 'bookings', {
-      isCondominiumResident: { $eq: true },
-    })
+    can(['get', 'create'], 'bookings', { isCondominiumResident: true })
+    can(['update', 'revoke'], 'bookings', { ownerId: { $eq: user.id } })
+    can('get', 'announcements', { isCondominiumResident: true })
   },
 }

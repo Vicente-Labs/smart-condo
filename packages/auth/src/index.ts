@@ -8,12 +8,14 @@ import { z } from 'zod'
 
 import type { User } from './models/user'
 import { permissions } from './permissions'
+import { announcementSubject } from './subjects/announcements'
 import { bookingsSubject } from './subjects/bookings'
 import { commonSpacesSubject } from './subjects/common-space'
 import { condominiumSubject } from './subjects/condominium'
 import { inviteSubject } from './subjects/invite'
 import { userSubject } from './subjects/user'
 
+export * from './subjects/announcements'
 export * from './subjects/bookings'
 export * from './subjects/common-space'
 export * from './subjects/condominium'
@@ -33,6 +35,7 @@ const appAbilitiesSchema = z.union([
   condominiumSubject,
   commonSpacesSubject,
   bookingsSubject,
+  announcementSubject,
   z.tuple([z.literal('manage'), z.literal('all')]),
 ])
 
