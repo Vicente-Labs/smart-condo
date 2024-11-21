@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1732226425981,
+      "tag": "20241121220025_add-base-db-structure",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1732226465138,
+      "tag": "20241121220105_add-common-spaces",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1732226699411,
+      "tag": "20241121220459_add-announcements",
+      "breakpoints": true
+    }
+  ]
+}
