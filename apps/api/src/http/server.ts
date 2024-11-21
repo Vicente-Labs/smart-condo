@@ -2,7 +2,6 @@ import fastifyCors from '@fastify/cors'
 import fastifyJwt from '@fastify/jwt'
 import fastifySwagger from '@fastify/swagger'
 import fastifySwaggerUI from '@fastify/swagger-ui'
-import { env } from '@repo/env'
 import fastify from 'fastify'
 import {
   jsonSchemaTransform,
@@ -10,6 +9,8 @@ import {
   validatorCompiler,
   ZodTypeProvider,
 } from 'fastify-type-provider-zod'
+
+import { env } from '@/env'
 
 import { errorHandler } from './error-handler'
 
@@ -23,17 +24,17 @@ app.setErrorHandler(errorHandler)
 app.register(fastifySwagger, {
   openapi: {
     info: {
-      title: 'Template | API Specs',
-      description: 'API documentation for Template web project',
+      title: 'Smart Condo | API Specs',
+      description: 'API documentation for Smart Condo',
       version: '1.0.0',
     },
     components: {
       securitySchemes: {
-        // bearerAuth: {
-        //   type: 'http',
-        //   scheme: 'bearer',
-        //   bearerFormat: 'JWT',
-        // },
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
       },
     },
   },

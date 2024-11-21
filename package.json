@@ -1,5 +1,5 @@
 {
-  "name": "turbo-template",
+  "name": "smart-condo",
   "private": true,
   "scripts": {
     "build": "turbo build",

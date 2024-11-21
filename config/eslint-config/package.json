@@ -1,5 +1,5 @@
 {
-  "name": "@repo/eslint-config",
+  "name": "@smart-condo/eslint-config",
   "version": "0.0.0",
   "private": true,
   "files": [
@@ -8,11 +8,11 @@
     "node.js"
   ],
   "devDependencies": {
-    "@repo/prettier": "workspace:*",
+    "@smart-condo/prettier": "workspace:*",
     "@rocketseat/eslint-config": "^2.2.2",
     "eslint-plugin-simple-import-sort": "^12.1.0"
   },
-  "prettier": "@repo/prettier",
+  "prettier": "@smart-condo/prettier",
   "eslintConfig": {
     "extends": ["./library.js"]
   }
