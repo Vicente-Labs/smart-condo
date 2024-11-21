@@ -1,0 +1,22 @@
+{
+  "name": "@smart-condo/auth",
+  "version": "0.0.0",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "devDependencies": {
+    "@smart-condo/eslint-config": "workspace:*",
+    "@smart-condo/prettier": "workspace:*",
+    "@smart-condo/tsconfig": "workspace:*"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@smart-condo/eslint-config/library"
+    ]
+  },
+  "prettier": "@smart-condo/prettier",
+  "dependencies": {
+    "@casl/ability": "^6.7.1",
+    "zod": "^3.23.8"
+  }
+}

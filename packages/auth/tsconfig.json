@@ -1,0 +1,4 @@
+{
+  "extends": "@smart-condo/tsconfig/library.json",
+  "include": ["src/**/*"]
+}
