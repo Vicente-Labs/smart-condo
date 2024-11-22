@@ -17,6 +17,8 @@ A platform for managing condominiums and buildings, including features such as c
 - [ ] It should be possible for the administrator to generate financial reports of the condominium
 - [ ] It should be possible to register and manage visitors
 - [ ] It should be possible to register and manage the condominium's infrastructure (e.g., pool, party room)
+- [ ] It should be possible to manage and track service requests for maintenance
+- [ ] It should be possible to create and manage community events
 
 ## Rns (Business Rules)
 - [ ] The user should not be able to register with a duplicate email
@@ -29,6 +31,7 @@ A platform for managing condominiums and buildings, including features such as c
 - [ ] The administrator can register and remove condominium employees
 - [ ] The creation of visitors must be validated by the responsible resident
 - [ ] Access control (entry and exit of residents, visitors, and employees) must be logged and validated
+- [ ] The administrator must ensure that all community events are approved before being published
 
 ## RNFs (Non-Functional Requirements)
 - [ ] User passwords must be encrypted
@@ -37,3 +40,4 @@ A platform for managing condominiums and buildings, including features such as c
 - [ ] The system must use authentication via JWT (JSON Web Token)
 - [ ] The system must be responsive and optimized for various devices (desktop, tablet, mobile)
 - [ ] The system must ensure high availability and be scalable to handle large amounts of users and data
+- [ ] The system must provide real-time notifications for important updates
