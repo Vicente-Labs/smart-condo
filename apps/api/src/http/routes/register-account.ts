@@ -24,6 +24,12 @@ export async function registerAccountRoute(app: FastifyInstance) {
         }),
         response: {
           204: z.null(),
+          400: z.object({
+            message: z.literal('User with same e-mail already exists.'),
+          }),
+          500: z.object({
+            message: z.tuple([z.literal('Internal server error.'), z.string()]),
+          }),
         },
       },
     },
