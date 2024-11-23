@@ -35,6 +35,9 @@ importers:
       '@paralleldrive/cuid2':
         specifier: ^2.2.2
         version: 2.2.2
+      '@smart-condo/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
       '@types/bcryptjs':
         specifier: ^2.4.6
         version: 2.4.6
