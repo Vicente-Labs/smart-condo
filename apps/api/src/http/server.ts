@@ -15,6 +15,7 @@ import { env } from '@/env'
 import { errorHandler } from './error-handler'
 import { authenticateWithPasswordRoute } from './routes/auth/authenticate-with-password'
 import { registerAccountRoute } from './routes/auth/register-account'
+import { getUserProfileRoute } from './routes/profile/get-user-profile'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
@@ -60,6 +61,8 @@ app.register(fastifyCors) // any front-end can access this API
 
 app.register(registerAccountRoute)
 app.register(authenticateWithPasswordRoute)
+
+app.register(getUserProfileRoute)
 
 app
   .listen({
