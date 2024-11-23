@@ -1,0 +1,1 @@
+ALTER TABLE "condominiums" ADD CONSTRAINT "condominiums_address_unique" UNIQUE("address");

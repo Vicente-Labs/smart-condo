@@ -43,6 +43,20 @@
       "when": 1732374941367,
       "tag": "20241123151541_passsword-cannot-be-nullable",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1732376668714,
+      "tag": "20241123154428_add-address-tcondominium",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1732381679418,
+      "tag": "20241123170759_add-unique-constraint-into-condominium-address",
+      "breakpoints": true
     }
   ]
 }

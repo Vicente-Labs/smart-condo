@@ -15,6 +15,7 @@ export const condominiums = pgTable('condominiums', {
 
   name: text('name').notNull(),
   description: text('description'),
+  address: text('address').notNull().unique(),
 
   logoUrl: text('logo_url'),
 

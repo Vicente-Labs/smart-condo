@@ -15,6 +15,7 @@ import { env } from '@/env'
 import { errorHandler } from './error-handler'
 import { authenticateWithPasswordRoute } from './routes/auth/authenticate-with-password'
 import { registerAccountRoute } from './routes/auth/register-account'
+import { registerCondominiumRoute } from './routes/condominiums/register-condominium'
 import { getProfileRoute } from './routes/profile/get-profile'
 import { getUserProfileRoute } from './routes/profile/get-user-profile'
 
@@ -65,6 +66,8 @@ app.register(authenticateWithPasswordRoute)
 
 app.register(getUserProfileRoute)
 app.register(getProfileRoute)
+
+app.register(registerCondominiumRoute)
 
 app
   .listen({
