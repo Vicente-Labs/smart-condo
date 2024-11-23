@@ -7,14 +7,14 @@ import { z } from 'zod'
 import { db } from '@/db'
 import { users } from '@/db/schemas'
 
-import { BadRequestError } from '../_errors/bad-request-errors'
+import { BadRequestError } from '../../_errors/bad-request-errors'
 
 export async function registerAccountRoute(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
     '/users',
     {
       schema: {
-        tags: ['users'],
+        tags: ['auth'],
         summary: 'Create a new user using email and password',
         body: z.object({
           name: z.string().min(1, 'Name is required'),

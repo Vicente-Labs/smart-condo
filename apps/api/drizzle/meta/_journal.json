@@ -36,6 +36,13 @@
       "when": 1732328444835,
       "tag": "20241123022044_add-phone-to-user",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1732374941367,
+      "tag": "20241123151541_passsword-cannot-be-nullable",
+      "breakpoints": true
     }
   ]
 }
