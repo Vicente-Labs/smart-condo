@@ -17,6 +17,7 @@ import { authenticateWithPasswordRoute } from './routes/auth/authenticate-with-p
 import { registerAccountRoute } from './routes/auth/register-account'
 import { deleteCondominiumRoute } from './routes/condominiums/delete-condominium'
 import { fetchCondominiumsRoute } from './routes/condominiums/fetch-condominiums'
+import { getCondominiumRoute } from './routes/condominiums/get-condominiums'
 import { registerCondominiumRoute } from './routes/condominiums/register-condominium'
 import { transferCondominiumOwnershipRoute } from './routes/condominiums/transfer-condominium-ownership'
 import { updateCondominiumRoute } from './routes/condominiums/update-condominium'
@@ -76,6 +77,7 @@ app.register(updateCondominiumRoute)
 app.register(transferCondominiumOwnershipRoute)
 app.register(deleteCondominiumRoute)
 app.register(fetchCondominiumsRoute)
+app.register(getCondominiumRoute)
 
 app
   .listen({
