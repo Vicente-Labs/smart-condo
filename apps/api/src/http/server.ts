@@ -15,6 +15,7 @@ import { env } from '@/env'
 import { errorHandler } from './error-handler'
 import { authenticateWithPasswordRoute } from './routes/auth/authenticate-with-password'
 import { registerAccountRoute } from './routes/auth/register-account'
+import { deleteCondominiumRoute } from './routes/condominiums/delete-condominium'
 import { registerCondominiumRoute } from './routes/condominiums/register-condominium'
 import { transferCondominiumOwnershipRoute } from './routes/condominiums/transfer-condominium-ownership'
 import { updateCondominiumRoute } from './routes/condominiums/update-condominium'
@@ -72,6 +73,7 @@ app.register(getProfileRoute)
 app.register(registerCondominiumRoute)
 app.register(updateCondominiumRoute)
 app.register(transferCondominiumOwnershipRoute)
+app.register(deleteCondominiumRoute)
 
 app
   .listen({
