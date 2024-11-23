@@ -15,6 +15,7 @@ import { env } from '@/env'
 import { errorHandler } from './error-handler'
 import { authenticateWithPasswordRoute } from './routes/auth/authenticate-with-password'
 import { registerAccountRoute } from './routes/auth/register-account'
+import { getProfileRoute } from './routes/profile/get-profile'
 import { getUserProfileRoute } from './routes/profile/get-user-profile'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
@@ -63,6 +64,7 @@ app.register(registerAccountRoute)
 app.register(authenticateWithPasswordRoute)
 
 app.register(getUserProfileRoute)
+app.register(getProfileRoute)
 
 app
   .listen({
