@@ -9,30 +9,25 @@ import { UnauthorizedError } from '@/http/_errors/unauthorized-error'
 import { auth } from '@/http/middlewares/auth'
 import { getPermissions } from '@/utils/get-permissions'
 
-export async function updateCondominiumRoute(app: FastifyInstance) {
+export async function transferCondominiumOwnershipRoute(app: FastifyInstance) {
   app
     .register(auth)
     .withTypeProvider<ZodTypeProvider>()
     .patch(
-      '/condominiums/:condominiumId',
+      '/condominiums/:condominiumId/transfer-ownership',
       {
         schema: {
           tags: ['condominiums'],
-          summary: 'Update a condominium',
+          summary: 'Transfer a condominium ownership',
           security: [{ bearerAuth: [] }],
           params: z.object({
             condominiumId: z.string(),
           }),
           body: z.object({
-            name: z.string(),
-            description: z.string().optional(),
-            address: z.string(),
-            logoUrl: z.string().optional(),
+            newOwnerId: z.string(),
           }),
           response: {
-            201: z.object({
-              message: z.literal('Condominium updated successfully'),
-            }),
+            204: z.null,
             400: z.object({
               message: z.string(),
             }),
@@ -51,7 +46,6 @@ export async function updateCondominiumRoute(app: FastifyInstance) {
       async (req, res) => {
         const { sub: userId } = await req.getCurrentUserId()
         const { condominiumId } = req.params
-
         const {
           condominium: { role, ...condominium },
         } = await req.getUserMembership(condominiumId)
@@ -63,21 +57,16 @@ export async function updateCondominiumRoute(app: FastifyInstance) {
           ownerId: condominium.ownerId,
         })
 
-        if (cannot('update', authCondominium))
+        if (cannot('transfer_ownership', authCondominium))
           throw new UnauthorizedError(`you're not able to perform this action`)
 
-        const { name, description, address, logoUrl } = req.body
+        const { newOwnerId } = req.body
 
         await db.update(condominiums).set({
-          name,
-          description,
-          address,
-          logoUrl,
+          ownerId: newOwnerId,
         })
 
-        return res.status(201).send({
-          message: 'Condominium updated successfully',
-        })
+        return res.status(204).send()
       },
     )
 }

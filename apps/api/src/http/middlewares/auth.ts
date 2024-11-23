@@ -25,7 +25,7 @@ export const auth = fastifyPlugin(async (app: FastifyInstance) => {
         .select({
           condominium: condominiums,
           role: condominiumResidents.role,
-          isResident: sql<boolean>`${condominiumResidents.userId} = ${userId}`,
+          isCondominiumResident: sql<boolean>`${condominiumResidents.userId} = ${userId}`,
         })
         .from(condominiumResidents)
         .where(
@@ -60,7 +60,7 @@ export const auth = fastifyPlugin(async (app: FastifyInstance) => {
         updatedAt: queriedCondominiumResident.condominium.updatedAt,
         createdAt: queriedCondominiumResident.condominium.createdAt,
         ownerId: queriedCondominiumResident.condominium.ownerId,
-        isResident: queriedCondominiumResident.isResident,
+        isCondominiumResident: queriedCondominiumResident.isCondominiumResident,
         role: queriedCondominiumResident.role,
       }
 

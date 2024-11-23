@@ -16,6 +16,7 @@ import { errorHandler } from './error-handler'
 import { authenticateWithPasswordRoute } from './routes/auth/authenticate-with-password'
 import { registerAccountRoute } from './routes/auth/register-account'
 import { registerCondominiumRoute } from './routes/condominiums/register-condominium'
+import { transferCondominiumOwnershipRoute } from './routes/condominiums/transfer-condominium-ownership'
 import { updateCondominiumRoute } from './routes/condominiums/update-condominium'
 import { getProfileRoute } from './routes/profile/get-profile'
 import { getUserProfileRoute } from './routes/profile/get-user-profile'
@@ -70,6 +71,7 @@ app.register(getProfileRoute)
 
 app.register(registerCondominiumRoute)
 app.register(updateCondominiumRoute)
+app.register(transferCondominiumOwnershipRoute)
 
 app
   .listen({

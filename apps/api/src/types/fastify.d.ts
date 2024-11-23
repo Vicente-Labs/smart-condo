@@ -11,7 +11,7 @@ type GetUserMembershipResponse = {
   updatedAt: Date
   createdAt: Date
   ownerId: string
-  isResident: boolean
+  isCondominiumResident: boolean
   role: Role
 }
 
