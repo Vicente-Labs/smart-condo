@@ -29,6 +29,13 @@
       "when": 1732227950594,
       "tag": "20241121222550_add_condominiun_residents_and_bookings",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1732328444835,
+      "tag": "20241123022044_add-phone-to-user",
+      "breakpoints": true
     }
   ]
 }

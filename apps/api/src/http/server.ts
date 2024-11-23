@@ -13,6 +13,7 @@ import {
 import { env } from '@/env'
 
 import { errorHandler } from './error-handler'
+import { registerAccountRoute } from './routes/register-account'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
 
@@ -23,6 +24,11 @@ app.setErrorHandler(errorHandler)
 
 app.register(fastifySwagger, {
   openapi: {
+    servers: [
+      {
+        url: `http://localhost:${env.BACKEND_PORT}`,
+      },
+    ],
     info: {
       title: 'Smart Condo | API Specs',
       description: 'API documentation for Smart Condo',
@@ -50,6 +56,8 @@ app.register(fastifyJwt, {
 })
 
 app.register(fastifyCors) // any front-end can access this API
+
+app.register(registerAccountRoute)
 
 app
   .listen({
