@@ -29,6 +29,7 @@ import { getCondominiumRoute } from './routes/condominiums/get-condominiums'
 import { registerCondominiumRoute } from './routes/condominiums/register-condominium'
 import { transferCondominiumOwnershipRoute } from './routes/condominiums/transfer-condominium-ownership'
 import { updateCondominiumRoute } from './routes/condominiums/update-condominium'
+import { createPollRoute } from './routes/polls/create-poll'
 import { getProfileRoute } from './routes/profile/get-profile'
 import { getUserProfileRoute } from './routes/profile/get-user-profile'
 import { updateProfileRoute } from './routes/profile/update-profile'
@@ -108,6 +109,8 @@ app.register(updateCommonSpaceRoute)
 app.register(fetchBookingsRoute)
 app.register(revokeBookingRoute)
 app.register(updateBookingRoute)
+
+app.register(createPollRoute)
 
 app.listen({
   host: env.HOST,
