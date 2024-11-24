@@ -4,6 +4,7 @@ import { z } from 'zod'
 
 import { db } from '@/db'
 import { polls } from '@/db/schemas/poll'
+import { pollOptions } from '@/db/schemas/poll-options'
 import { auth } from '@/http/middlewares/auth'
 
 export async function createPollRoute(app: FastifyInstance) {
@@ -23,6 +24,12 @@ export async function createPollRoute(app: FastifyInstance) {
           body: z.object({
             title: z.string(),
             description: z.string(),
+            options: z
+              .object({
+                label: z.string(),
+                description: z.string().nullable(),
+              })
+              .array(),
           }),
           response: {
             201: z.object({
@@ -44,19 +51,32 @@ export async function createPollRoute(app: FastifyInstance) {
       async (req, res) => {
         const { sub: authorId } = await req.getCurrentUserId()
 
-        const { title, description } = req.body
+        const { title, description, options } = req.body
 
         const { condominiumId } = req.params
 
-        const [poll] = await db
-          .insert(polls)
-          .values({
-            title,
-            description,
-            condominiumId,
-            authorId,
-          })
-          .returning()
+        const [poll] = await db.transaction(async (tx) => {
+          const poll = await tx
+            .insert(polls)
+            .values({
+              title,
+              description,
+              condominiumId,
+              authorId,
+            })
+            .returning()
+
+          await Promise.all(
+            options.map(async (op) => {
+              await tx.insert(pollOptions).values({
+                ...op,
+                pollId: poll[0].id,
+              })
+            }),
+          )
+
+          return poll
+        })
 
         // TODO: add notification
 
