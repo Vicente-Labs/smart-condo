@@ -5,29 +5,39 @@ import { z } from 'zod'
 
 import { db } from '@/db'
 import { bookings } from '@/db/schemas'
+import { BadRequestError } from '@/http/_errors/bad-request-errors'
 import { auth } from '@/http/middlewares/auth'
 import { CACHE_KEYS, getCache, invalidateCache, setCache } from '@/redis'
 
-export async function deleteBookingRoute(app: FastifyInstance) {
+export async function updateBookingRoute(app: FastifyInstance) {
   app
     .register(auth)
     .withTypeProvider<ZodTypeProvider>()
-    .delete(
-      '/bookings/:bookingId/revoke',
+    .put(
+      '/bookings/:bookingId ',
       {
         schema: {
           tags: ['bookings'],
-          summary: 'Revoke a booking',
+          summary: 'Update a booking',
           security: [{ bearerAuth: [] }],
           params: z.object({
             bookingId: z.string(),
           }),
+          body: z.object({
+            date: z.coerce.date(),
+            estimatedParticipants: z.number(),
+          }),
           response: {
             200: z.object({
-              message: z.literal('Booking revoked successfully'),
+              message: z.literal('Booking updated successfully'),
             }),
             400: z.object({
-              message: z.string(),
+              message: z.tuple([
+                z.literal('Invalid date'),
+                z.literal('Invalid estimated participants'),
+                z.literal('Booking not found'),
+                z.string(),
+              ]),
             }),
             401: z.object({
               message: z.literal('Invalid auth token'),
@@ -43,34 +53,47 @@ export async function deleteBookingRoute(app: FastifyInstance) {
 
         const { bookingId } = req.params
 
-        const [deletedBooking] = await db
-          .delete(bookings)
+        const { date, estimatedParticipants } = req.body
+
+        const booking = await db
+          .select()
+          .from(bookings)
           .where(and(eq(bookings.id, bookingId), eq(bookings.userId, userId)))
+
+        if (!booking) throw new BadRequestError('Booking not found')
+
+        const [updatedBooking] = await db
+          .update(bookings)
+          .set({ date, estimatedParticipants })
+          .where(eq(bookings.id, bookingId))
           .returning()
 
         const cachedBookings = await getCache<(typeof bookings.$inferSelect)[]>(
-          CACHE_KEYS.bookings(userId, deletedBooking.condominiumId),
+          CACHE_KEYS.bookings(userId, updatedBooking.condominiumId),
         )
 
         const filteredBookings = cachedBookings?.filter(
-          (booking) => booking.id !== deletedBooking.id,
+          (booking) => booking.id !== updatedBooking.id,
         )
 
         if (filteredBookings) {
           await setCache(
-            CACHE_KEYS.bookings(userId, deletedBooking.condominiumId),
+            CACHE_KEYS.bookings(userId, updatedBooking.condominiumId),
             JSON.stringify(filteredBookings),
           )
         } else {
           await invalidateCache(
-            CACHE_KEYS.bookings(userId, deletedBooking.condominiumId),
+            CACHE_KEYS.bookings(userId, updatedBooking.condominiumId),
           )
         }
 
-        await invalidateCache(CACHE_KEYS.booking(userId, deletedBooking.id))
+        await setCache(
+          CACHE_KEYS.booking(userId, bookingId),
+          JSON.stringify(updatedBooking),
+        )
 
         return res.status(200).send({
-          message: 'Booking revoked successfully',
+          message: 'Booking updated successfully',
         })
       },
     )
