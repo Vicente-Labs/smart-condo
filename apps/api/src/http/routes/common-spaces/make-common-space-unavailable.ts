@@ -8,6 +8,7 @@ import { commonSpaces, condominiums } from '@/db/schemas'
 import { BadRequestError } from '@/http/_errors/bad-request-errors'
 import { UnauthorizedError } from '@/http/_errors/unauthorized-error'
 import { auth } from '@/http/middlewares/auth'
+import { CACHE_KEYS, setCache } from '@/redis'
 import { getPermissions } from '@/utils/get-permissions'
 
 export async function makeCommonSpaceUnavailableRoute(app: FastifyInstance) {
@@ -76,12 +77,19 @@ export async function makeCommonSpaceUnavailableRoute(app: FastifyInstance) {
             `You are not allowed to inactivate this common space`,
           )
 
-        await db
+        const [commonSpace] = await db
           .update(commonSpaces)
           .set({
             available: false,
           })
           .where(eq(commonSpaces.id, id))
+          .returning()
+
+        await setCache(
+          CACHE_KEYS.commonSpaces(id),
+          JSON.stringify(commonSpace),
+          'LONG',
+        )
 
         return res.status(200).send({
           message: 'Common space inactivated successfully',

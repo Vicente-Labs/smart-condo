@@ -7,7 +7,7 @@ import { db } from '@/db'
 import { users } from '@/db/schemas'
 import { BadRequestError } from '@/http/_errors/bad-request-errors'
 import { auth } from '@/http/middlewares/auth'
-import { CACHE_KEYS, invalidateCache } from '@/redis'
+import { CACHE_KEYS, setCache } from '@/redis'
 
 export async function updateProfileRoute(app: FastifyInstance) {
   app
@@ -55,12 +55,13 @@ export async function updateProfileRoute(app: FastifyInstance) {
 
         if (existingUser) throw new BadRequestError('Email already in use')
 
-        await db
+        const [user] = await db
           .update(users)
           .set({ name, email, phone, bio, avatarUrl })
           .where(eq(users.id, userId))
+          .returning()
 
-        await invalidateCache(CACHE_KEYS.profile(userId))
+        await setCache(CACHE_KEYS.profile(userId), JSON.stringify(user))
 
         return res.status(200).send({
           message: 'Profile updated successfully',

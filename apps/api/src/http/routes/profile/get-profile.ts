@@ -58,9 +58,7 @@ export async function getProfileRoute(app: FastifyInstance) {
           createdAt: Date
         }>(CACHE_KEYS.profile(userId))
 
-        if (cachedProfile) {
-          return res.status(200).send({ user: cachedProfile })
-        }
+        if (cachedProfile) return res.status(200).send({ user: cachedProfile })
 
         const user = await db
           .select({

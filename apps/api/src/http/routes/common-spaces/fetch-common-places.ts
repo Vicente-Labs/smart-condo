@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 import { db } from '@/db'
 import { commonSpaces, condominiumResidents } from '@/db/schemas'
-import { CACHE_KEYS, setCache } from '@/redis'
+import { CACHE_KEYS, getCache, setCache } from '@/redis'
 
 import { auth } from '../../middlewares/auth'
 
@@ -55,6 +55,26 @@ export async function fetchCommonSpacesRoute(app: FastifyInstance) {
         const { condominiumId } = req.params
 
         await req.getUserMembership(condominiumId)
+
+        const cachedCommonSpaces = await getCache<
+          {
+            id: string
+            name: string
+            description: string | null
+            available: boolean
+            capacity: number
+            createdAt: Date
+            updatedAt: Date
+          }[]
+        >(CACHE_KEYS.commonSpaces(condominiumId))
+
+        if (cachedCommonSpaces)
+          return res.status(200).send({
+            message: 'Common spaces fetched successfully',
+            condominiumId,
+            isCondominiumResident: true,
+            commonSpaces: cachedCommonSpaces,
+          })
 
         const queriedCommonSpaces = await db
           .select({

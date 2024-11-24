@@ -9,6 +9,7 @@ import { commonSpaces, condominiumResidents } from '@/db/schemas'
 import { BadRequestError } from '@/http/_errors/bad-request-errors'
 import { UnauthorizedError } from '@/http/_errors/unauthorized-error'
 import { auth } from '@/http/middlewares/auth'
+import { CACHE_KEYS, setCache } from '@/redis'
 import { getPermissions } from '@/utils/get-permissions'
 
 export async function updateCommonSpaceRoute(app: FastifyInstance) {
@@ -75,10 +76,17 @@ export async function updateCommonSpaceRoute(app: FastifyInstance) {
         if (cannot('update', authCommonSpace))
           throw new UnauthorizedError(`You cannot update this common space`)
 
-        await db
+        const [commonSpace] = await db
           .update(commonSpaces)
           .set({ name, description, available, capacity })
           .where(eq(commonSpaces.id, id))
+          .returning()
+
+        await setCache(
+          CACHE_KEYS.commonSpaces(id),
+          JSON.stringify(commonSpace),
+          'LONG',
+        )
 
         return res.status(200).send({
           message: 'Common space updated successfully',

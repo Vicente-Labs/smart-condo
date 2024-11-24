@@ -7,6 +7,7 @@ import { db } from '@/db'
 import { users } from '@/db/schemas'
 import { UnauthorizedError } from '@/http/_errors/unauthorized-error'
 import { auth } from '@/http/middlewares/auth'
+import { CACHE_KEYS, getCache, setCache } from '@/redis'
 
 import { BadRequestError } from '../../_errors/bad-request-errors'
 
@@ -55,6 +56,18 @@ export async function getUserProfileRoute(app: FastifyInstance) {
 
         const { userId } = req.params
 
+        const cachedUser = await getCache<{
+          id: string
+          name: string
+          email: string
+          phone: string
+          avatarUrl: string | null
+          updatedAt: Date
+          createdAt: Date
+        }>(CACHE_KEYS.profile(userId))
+
+        if (cachedUser) return res.status(200).send({ user: cachedUser })
+
         const user = await db
           .select({
             id: users.id,
@@ -70,6 +83,8 @@ export async function getUserProfileRoute(app: FastifyInstance) {
 
         if (!user || user.length <= 0)
           throw new BadRequestError('User not found.')
+
+        await setCache(CACHE_KEYS.profile(userId), JSON.stringify(user[0]))
 
         return res.status(200).send({ user: user[0] })
       },

@@ -52,6 +52,7 @@ export async function bookCommonSpaceRoute(app: FastifyInstance) {
       async (req, res) => {
         const { sub: userId } = await req.getCurrentUserId()
         const { id } = req.params
+
         const commonSpace = await db
           .select()
           .from(condominiumResidents)
