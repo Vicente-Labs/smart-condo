@@ -14,6 +14,8 @@ export const CACHE_KEYS = {
     `permissions:${userId}:${role}`,
   userCondominiums: (userId: string) => `user:${userId}:condominiums`,
   profile: (userId: string) => `profile:${userId}`,
+  commonSpace: (id: string, condominiumId: string) =>
+    `condominium:${condominiumId}:common-space:${id}`,
 } as const
 
 export const CACHE_TIMES = {

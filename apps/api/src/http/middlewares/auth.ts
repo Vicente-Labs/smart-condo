@@ -39,9 +39,7 @@ export const auth = fastifyPlugin(async (app: FastifyInstance) => {
         condominium: GetUserMembershipResponse
       }>(CACHE_KEYS.membership(userId, id))
 
-      if (cachedMembership) {
-        return cachedMembership
-      }
+      if (cachedMembership) return cachedMembership
 
       const [queriedCondominiumResident] = await db
         .select({
