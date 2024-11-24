@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm'
+import { and, eq, sql } from 'drizzle-orm'
 import type { FastifyInstance } from 'fastify'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
@@ -6,9 +6,17 @@ import { z } from 'zod'
 import { db } from '@/db'
 import { condominiumResidents } from '@/db/schemas'
 import { polls } from '@/db/schemas/poll'
+import { pollOptions } from '@/db/schemas/poll-options'
 import { BadRequestError } from '@/http/_errors/bad-request-errors'
 import { auth } from '@/http/middlewares/auth'
 import { CACHE_KEYS, getCache, setCache } from '@/redis'
+
+const pollOptionsSchema = z.object({
+  id: z.string(),
+  label: z.string(),
+  description: z.string().nullable(),
+  votes: z.number(),
+})
 
 const pollSchema = z.object({
   id: z.string(),
@@ -16,8 +24,11 @@ const pollSchema = z.object({
   description: z.string(),
   createdAt: z.coerce.date(),
   condominiumId: z.string(),
-  authorId: z.string().nullish(),
+  authorId: z.string().nullable(),
+  options: pollOptionsSchema.array(),
 })
+
+type Poll = z.infer<typeof pollSchema & typeof pollOptionsSchema>
 
 export async function getPollRoute(app: FastifyInstance) {
   app
@@ -52,9 +63,7 @@ export async function getPollRoute(app: FastifyInstance) {
 
         const { pollId } = req.params
 
-        const cachedPoll = await getCache<typeof polls.$inferSelect>(
-          CACHE_KEYS.poll(pollId),
-        )
+        const cachedPoll = await getCache<Poll>(CACHE_KEYS.poll(pollId))
 
         if (cachedPoll)
           return res
@@ -69,6 +78,9 @@ export async function getPollRoute(app: FastifyInstance) {
             createdAt: polls.createdAt,
             condominiumId: polls.condominiumId,
             authorId: polls.authorId,
+            options: sql<
+              (typeof pollOptions.$inferSelect)[]
+            >`${pollOptions}`.mapWith(pollOptionsSchema.parse),
           })
           .from(condominiumResidents)
           .where(eq(condominiumResidents.userId, userId))
@@ -79,6 +91,7 @@ export async function getPollRoute(app: FastifyInstance) {
               eq(polls.id, pollId),
             ),
           )
+          .leftJoin(pollOptions, eq(pollOptions.pollId, polls.id))
 
         if (!poll || poll.length <= 0)
           throw new BadRequestError('Poll not found')
