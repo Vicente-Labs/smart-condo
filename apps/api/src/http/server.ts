@@ -103,6 +103,6 @@ app.register(makeCommonSpaceUnavailableRoute)
 app.register(updateCommonSpaceRoute)
 
 app.listen({
-  host: '0.0.0.0',
+  host: env.HOST,
   port: env.BACKEND_PORT,
 })

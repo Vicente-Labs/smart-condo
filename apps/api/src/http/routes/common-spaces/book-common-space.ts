@@ -39,7 +39,7 @@ export async function bookCommonSpaceRoute(app: FastifyInstance) {
             }),
             401: z.object({
               message: z.tuple([
-                z.literal('Invalid auth token.'),
+                z.literal('Invalid auth token'),
                 z.literal('You are not allowed to book this common space'),
               ]),
             }),

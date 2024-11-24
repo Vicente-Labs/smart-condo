@@ -41,7 +41,7 @@ export async function fetchCommonSpacesRoute(app: FastifyInstance) {
               isCondominiumResident: z.boolean(),
             }),
             401: z.object({
-              message: z.literal('Invalid auth token.'),
+              message: z.literal('Invalid auth token'),
             }),
             404: z.object({
               message: z.string(),
