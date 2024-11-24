@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm'
+import { desc, eq } from 'drizzle-orm'
 import { FastifyInstance } from 'fastify'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
@@ -30,6 +30,9 @@ export async function fetchCondominiumsRoute(app: FastifyInstance) {
           tags: ['condominiums'],
           summary: 'Fetch all that a user is a resident of',
           security: [{ bearerAuth: [] }],
+          querystring: z.object({
+            page: z.number().default(1),
+          }),
           response: {
             200: z.object({
               message: z.literal('Condominiums fetched successfully'),
@@ -51,6 +54,7 @@ export async function fetchCondominiumsRoute(app: FastifyInstance) {
       },
       async (req, res) => {
         const { sub: userId } = await req.getCurrentUserId()
+        const { page } = req.query
 
         const queriedCondominiums = await db
           .select()
@@ -60,6 +64,9 @@ export async function fetchCondominiumsRoute(app: FastifyInstance) {
             condominiums,
             eq(condominiumResidents.condominiumId, condominiums.id),
           )
+          .orderBy(desc(condominiums.createdAt))
+          .offset((page - 1) * 20)
+          .limit(20)
 
         const formattedCondominiums = queriedCondominiums.map(
           ({ condominiums: { id, ownerId, ...condominium } }) => ({
