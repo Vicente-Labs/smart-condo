@@ -8,7 +8,7 @@ import { auth } from '@/http/middlewares/auth'
 import { CACHE_KEYS, setCache } from '@/redis'
 import { getPermissions } from '@/utils/get-permissions'
 
-import { UnauthorizedError } from '../_errors/unauthorized-error'
+import { UnauthorizedError } from '../../_errors/unauthorized-error'
 
 export async function registerCommonSpaceRoute(app: FastifyInstance) {
   app

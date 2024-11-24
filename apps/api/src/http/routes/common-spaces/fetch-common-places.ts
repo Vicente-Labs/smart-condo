@@ -7,7 +7,7 @@ import { db } from '@/db'
 import { commonSpaces, condominiumResidents } from '@/db/schemas'
 import { CACHE_KEYS, setCache } from '@/redis'
 
-import { auth } from '../middlewares/auth'
+import { auth } from '../../middlewares/auth'
 
 export async function fetchCommonSpacesRoute(app: FastifyInstance) {
   app

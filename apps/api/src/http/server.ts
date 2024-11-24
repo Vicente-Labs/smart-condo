@@ -12,11 +12,11 @@ import {
 
 import { env } from '@/env'
 
-import { fetchCommonSpacesRoute } from './common-spaces/fetch-common-places'
-import { registerCommonSpaceRoute } from './common-spaces/register-common-place'
 import { errorHandler } from './error-handler'
 import { authenticateWithPasswordRoute } from './routes/auth/authenticate-with-password'
 import { registerAccountRoute } from './routes/auth/register-account'
+import { fetchCommonSpacesRoute } from './routes/common-spaces/fetch-common-places'
+import { registerCommonSpaceRoute } from './routes/common-spaces/register-common-place'
 import { deleteCondominiumRoute } from './routes/condominiums/delete-condominium'
 import { fetchCondominiumsRoute } from './routes/condominiums/fetch-condominiums'
 import { getCondominiumRoute } from './routes/condominiums/get-condominiums'
