@@ -15,6 +15,7 @@ import { env } from '@/env'
 import { errorHandler } from './error-handler'
 import { authenticateWithPasswordRoute } from './routes/auth/authenticate-with-password'
 import { registerAccountRoute } from './routes/auth/register-account'
+import { deleteBookingRoute } from './routes/bookings/delete-booking'
 import { fetchBookingsRoute } from './routes/bookings/fetch-bookings'
 import { bookCommonSpaceRoute } from './routes/common-spaces/book-common-space'
 import { fetchCommonSpacesRoute } from './routes/common-spaces/fetch-common-places'
@@ -104,6 +105,7 @@ app.register(makeCommonSpaceUnavailableRoute)
 app.register(updateCommonSpaceRoute)
 
 app.register(fetchBookingsRoute)
+app.register(deleteBookingRoute)
 
 app.listen({
   host: env.HOST,
