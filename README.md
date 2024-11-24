@@ -3,10 +3,10 @@
 A platform for managing condominiums and buildings, including features such as common area reservations, voting, announcements, and financial management.
 
 ## Rfs (Functional Requirements)
-- [ ] It should be possible to register a user
-- [ ] It should be possible to authenticate and log in
-- [ ] It should be possible to view the profile of a logged-in user
-- [ ] It should be possible to list the condominiums the user is registered in
+- [x] It should be possible to register a user
+- [x] It should be possible to authenticate and log in
+- [x] It should be possible to view the profile of a logged-in user
+- [x] It should be possible to list the condominiums the user is registered in
 - [ ] It should be possible for the user to register and manage common area reservations
 - [ ] It should be possible to create and manage votes within the condominium
 - [ ] It should be possible for residents to participate in votes
@@ -21,7 +21,7 @@ A platform for managing condominiums and buildings, including features such as c
 - [ ] It should be possible to create and manage community events
 
 ## Rns (Business Rules)
-- [ ] The user should not be able to register with a duplicate email
+- [x] The user should not be able to register with a duplicate email
 - [ ] The administrator must validate all common area reservations before confirming them
 - [ ] A user cannot reserve more than one common area at the same time
 - [ ] Votes can only be created by administrators
@@ -34,10 +34,10 @@ A platform for managing condominiums and buildings, including features such as c
 - [ ] The administrator must ensure that all community events are approved before being published
 
 ## RNFs (Non-Functional Requirements)
-- [ ] User passwords must be encrypted
-- [ ] Application data must be persisted in PostgreSQL
+- [x] User passwords must be encrypted
+- [x] Application data must be persisted in PostgreSQL
 - [ ] All data lists (users, reservations, votes) must be paginated with 20 items per page
-- [ ] The system must use authentication via JWT (JSON Web Token)
+- [x] The system must use authentication via JWT (JSON Web Token)
 - [ ] The system must be responsive and optimized for various devices (desktop, tablet, mobile)
 - [ ] The system must ensure high availability and be scalable to handle large amounts of users and data
 - [ ] The system must provide real-time notifications for important updates
