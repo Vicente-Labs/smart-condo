@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { db } from '@/db'
 import { condominiumResidents, condominiums } from '@/db/schemas'
 import { auth } from '@/http/middlewares/auth'
+import { CACHE_KEYS, getCache } from '@/redis'
 
 const condominiumSchema = z.object({
   ownerId: z.string(),
@@ -19,11 +20,13 @@ const condominiumSchema = z.object({
   createdAt: z.coerce.date(),
 })
 
+type Condominium = z.infer<typeof condominiumSchema>
+
 export async function fetchCondominiumsRoute(app: FastifyInstance) {
   app
     .register(auth)
     .withTypeProvider<ZodTypeProvider>()
-    .post(
+    .get(
       '/condominiums',
       {
         schema: {
@@ -55,6 +58,16 @@ export async function fetchCondominiumsRoute(app: FastifyInstance) {
       async (req, res) => {
         const { sub: userId } = await req.getCurrentUserId()
         const { page } = req.query
+
+        const cachedCondominiums = await getCache<Condominium[]>(
+          CACHE_KEYS.userCondominiums(userId),
+        )
+
+        if (cachedCondominiums)
+          return res.status(200).send({
+            message: 'Condominiums fetched successfully',
+            condominiums: cachedCondominiums,
+          })
 
         const queriedCondominiums = await db
           .select()

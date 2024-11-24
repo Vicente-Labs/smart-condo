@@ -17,7 +17,7 @@ export const commonSpaces = pgTable('common_spaces', {
   capacity: integer('capacity').notNull(),
 
   condominiumId: text('condominium_id')
-    .references(() => condominiums.id)
+    .references(() => condominiums.id, { onDelete: 'cascade' })
     .notNull(),
 
   updatedAt: timestamp('updated_at').notNull().defaultNow(),

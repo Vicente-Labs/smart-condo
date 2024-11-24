@@ -6,8 +6,10 @@ import { z } from 'zod'
 
 import { db } from '@/db'
 import { condominiums } from '@/db/schemas'
+import { BadRequestError } from '@/http/_errors/bad-request-errors'
 import { UnauthorizedError } from '@/http/_errors/unauthorized-error'
 import { auth } from '@/http/middlewares/auth'
+import { CACHE_KEYS, invalidateCache } from '@/redis'
 import { getPermissions } from '@/utils/get-permissions'
 
 export async function deleteCondominiumRoute(app: FastifyInstance) {
@@ -27,9 +29,7 @@ export async function deleteCondominiumRoute(app: FastifyInstance) {
           response: {
             204: z.null(),
             400: z.object({
-              message: z.literal(
-                'Condominium with this address already exists',
-              ),
+              message: z.literal('Condominium not found'),
             }),
             401: z.object({
               message: z.literal('Invalid auth token'),
@@ -44,23 +44,37 @@ export async function deleteCondominiumRoute(app: FastifyInstance) {
         const { sub: ownerId } = await req.getCurrentUserId()
         const { condominiumId } = req.params
 
-        const {
-          condominium: { role, ...condominium },
-        } = await req.getUserMembership(condominiumId)
+        try {
+          const {
+            condominium: { role, ...condominium },
+          } = await req.getUserMembership(condominiumId)
 
-        const { cannot } = getPermissions(ownerId, role)
+          const { cannot } = await getPermissions(ownerId, role)
 
-        const authCondominium = condominiumSchema.parse({
-          ...condominium,
-          ownerId: condominium.ownerId,
-        })
+          const authCondominium = condominiumSchema.parse({
+            ...condominium,
+            ownerId: condominium.ownerId,
+          })
 
-        if (cannot('delete', authCondominium))
-          throw new UnauthorizedError(`you're not able to perform this action`)
+          if (cannot('delete', authCondominium))
+            throw new UnauthorizedError(
+              `you're not able to perform this action`,
+            )
 
-        await db.delete(condominiums).where(eq(condominiums.id, condominiumId))
+          await db
+            .delete(condominiums)
+            .where(eq(condominiums.id, condominiumId))
 
-        return res.status(204).send()
+          await invalidateCache(CACHE_KEYS.condominium(condominiumId))
+          await invalidateCache(
+            CACHE_KEYS.userCondominiums(condominium.ownerId),
+          )
+          await invalidateCache(CACHE_KEYS.membership(ownerId, condominiumId))
+
+          return res.status(204).send()
+        } catch (error) {
+          throw new BadRequestError('Condominium not found')
+        }
       },
     )
 }

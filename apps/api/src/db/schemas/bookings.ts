@@ -16,14 +16,14 @@ export const bookings = pgTable('bookings', {
   estimatedParticipants: integer('estimated_participants').notNull(),
 
   commonSpaceId: text('common_space_id')
-    .references(() => commonSpaces.id)
+    .references(() => commonSpaces.id, { onDelete: 'cascade' })
     .notNull(),
   condominiumId: text('condominium_id')
-    .references(() => condominiums.id)
+    .references(() => condominiums.id, { onDelete: 'cascade' })
     .notNull(),
 
   userId: text('user_id')
-    .references(() => users.id)
+    .references(() => users.id, { onDelete: 'cascade' })
     .notNull(),
 
   updatedAt: timestamp('updated_at').notNull().defaultNow(),

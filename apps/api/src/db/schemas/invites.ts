@@ -25,7 +25,7 @@ export const invites = pgTable('invites', {
     .references(() => users.id)
     .notNull(),
   condominiumId: text('condominium_id')
-    .references(() => condominiums.id)
+    .references(() => condominiums.id, { onDelete: 'cascade' })
     .notNull(),
 
   role: inviteRole('role').notNull().default('MEMBER'),

@@ -6,8 +6,12 @@ import { condominiums, users } from '.'
 export const condominiumRole = pgEnum('condominium_role', ['ADMIN', 'MEMBER'])
 
 export const condominiumResidents = pgTable('condominium_residents', {
-  userId: text('user_id').references(() => users.id),
-  condominiumId: text('condominium_id').references(() => condominiums.id),
+  userId: text('user_id')
+    .references(() => users.id, { onDelete: 'cascade' })
+    .notNull(),
+  condominiumId: text('condominium_id')
+    .references(() => condominiums.id, { onDelete: 'cascade' })
+    .notNull(),
 
   role: condominiumRole('role').notNull().default('MEMBER'),
 })

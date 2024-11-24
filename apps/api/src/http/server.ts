@@ -24,7 +24,17 @@ import { updateCondominiumRoute } from './routes/condominiums/update-condominium
 import { getProfileRoute } from './routes/profile/get-profile'
 import { getUserProfileRoute } from './routes/profile/get-user-profile'
 
-const app = fastify().withTypeProvider<ZodTypeProvider>()
+const app = fastify({
+  logger: {
+    transport: {
+      target: 'pino-pretty',
+      options: {
+        translateTime: 'HH:MM:ss Z',
+        ignore: 'pid,hostname',
+      },
+    },
+  },
+}).withTypeProvider<ZodTypeProvider>()
 
 app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
@@ -79,9 +89,7 @@ app.register(deleteCondominiumRoute)
 app.register(fetchCondominiumsRoute)
 app.register(getCondominiumRoute)
 
-app
-  .listen({
-    host: '0.0.0.0',
-    port: env.BACKEND_PORT,
-  })
-  .then(() => console.log('HTTP server is running!'))
+app.listen({
+  host: '0.0.0.0',
+  port: env.BACKEND_PORT,
+})

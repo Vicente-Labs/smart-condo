@@ -4,9 +4,10 @@ import { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
 
 import { db } from '@/db'
-import { condominiums } from '@/db/schemas'
+import { condominiumResidents, condominiums } from '@/db/schemas'
 import { BadRequestError } from '@/http/_errors/bad-request-errors'
 import { auth } from '@/http/middlewares/auth'
+import { CACHE_KEYS, setCache } from '@/redis'
 
 export async function registerCondominiumRoute(app: FastifyInstance) {
   app
@@ -59,16 +60,38 @@ export async function registerCondominiumRoute(app: FastifyInstance) {
             'Condominium with this address already exists',
           )
 
-        const [condominium] = await db
-          .insert(condominiums)
-          .values({
-            name,
-            description,
-            address,
-            logoUrl,
-            ownerId,
+        const condominium = await db.transaction(async (tx) => {
+          const [condominium] = await tx
+            .insert(condominiums)
+            .values({
+              name,
+              description,
+              address,
+              logoUrl,
+              ownerId,
+            })
+            .returning()
+
+          await tx.insert(condominiumResidents).values({
+            userId: ownerId,
+            condominiumId: condominium.id,
+            role: 'ADMIN',
           })
-          .returning({ id: condominiums.id })
+
+          await setCache(
+            CACHE_KEYS.condominium(condominium.id),
+            JSON.stringify(condominium),
+            'LONG',
+          )
+
+          await setCache(
+            CACHE_KEYS.userCondominiums(ownerId),
+            JSON.stringify([condominium]),
+            'LONG',
+          )
+
+          return condominium
+        })
 
         return res.status(201).send({
           message: 'Condominium created successfully',

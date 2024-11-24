@@ -7,6 +7,7 @@ import { db } from '@/db'
 import { condominiums } from '@/db/schemas'
 import { UnauthorizedError } from '@/http/_errors/unauthorized-error'
 import { auth } from '@/http/middlewares/auth'
+import { CACHE_KEYS, invalidateCache } from '@/redis'
 import { getPermissions } from '@/utils/get-permissions'
 
 export async function updateCondominiumRoute(app: FastifyInstance) {
@@ -56,7 +57,7 @@ export async function updateCondominiumRoute(app: FastifyInstance) {
           condominium: { role, ...condominium },
         } = await req.getUserMembership(condominiumId)
 
-        const { cannot } = getPermissions(userId, role)
+        const { cannot } = await getPermissions(userId, role)
 
         const authCondominium = condominiumSchema.parse({
           ...condominium,
@@ -74,6 +75,9 @@ export async function updateCondominiumRoute(app: FastifyInstance) {
           address,
           logoUrl,
         })
+
+        invalidateCache(CACHE_KEYS.condominium(condominiumId))
+        invalidateCache(CACHE_KEYS.userCondominiums(condominium.ownerId))
 
         return res.status(201).send({
           message: 'Condominium updated successfully',

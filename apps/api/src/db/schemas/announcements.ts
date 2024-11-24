@@ -14,11 +14,11 @@ export const announcements = pgTable('announcements', {
   content: text('content').notNull(),
 
   condominiumId: text('condominium_id')
-    .references(() => condominiums.id)
+    .references(() => condominiums.id, { onDelete: 'cascade' })
     .notNull(),
-  announcerId: text('announcer_id')
-    .references(() => users.id)
-    .notNull(),
+  announcerId: text('announcer_id').references(() => users.id, {
+    onDelete: 'set null',
+  }),
 
   announcementDate: timestamp('announcement_date').notNull(),
 

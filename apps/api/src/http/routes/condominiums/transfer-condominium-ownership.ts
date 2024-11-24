@@ -1,4 +1,5 @@
 import { condominiumSchema } from '@smart-condo/auth'
+import { eq } from 'drizzle-orm'
 import { FastifyInstance } from 'fastify'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
@@ -7,6 +8,7 @@ import { db } from '@/db'
 import { condominiums } from '@/db/schemas'
 import { UnauthorizedError } from '@/http/_errors/unauthorized-error'
 import { auth } from '@/http/middlewares/auth'
+import { CACHE_KEYS, invalidateCache } from '@/redis'
 import { getPermissions } from '@/utils/get-permissions'
 
 export async function transferCondominiumOwnershipRoute(app: FastifyInstance) {
@@ -27,7 +29,7 @@ export async function transferCondominiumOwnershipRoute(app: FastifyInstance) {
             newOwnerId: z.string(),
           }),
           response: {
-            204: z.null,
+            204: z.null(),
             400: z.object({
               message: z.string(),
             }),
@@ -50,7 +52,7 @@ export async function transferCondominiumOwnershipRoute(app: FastifyInstance) {
           condominium: { role, ...condominium },
         } = await req.getUserMembership(condominiumId)
 
-        const { cannot } = getPermissions(userId, role)
+        const { cannot } = await getPermissions(userId, role)
 
         const authCondominium = condominiumSchema.parse({
           ...condominium,
@@ -62,9 +64,13 @@ export async function transferCondominiumOwnershipRoute(app: FastifyInstance) {
 
         const { newOwnerId } = req.body
 
-        await db.update(condominiums).set({
-          ownerId: newOwnerId,
-        })
+        await db
+          .update(condominiums)
+          .set({ ownerId: newOwnerId })
+          .where(eq(condominiums.id, condominiumId))
+
+        invalidateCache(CACHE_KEYS.condominium(condominiumId))
+        invalidateCache(CACHE_KEYS.userCondominiums(condominium.ownerId))
 
         return res.status(204).send()
       },

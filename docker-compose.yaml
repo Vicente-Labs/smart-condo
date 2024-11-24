@@ -7,6 +7,22 @@ services:
     environment:
       POSTGRES_USER: docker
       POSTGRES_PASSWORD: docker
-      POSTGRES_DB: smart_condo
+      POSTGRESQL_REPLICATION_USE_PASSFILE: "no"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     ports:
       - 5432:5432
+
+  redis:
+    image: bitnami/redis:latest
+    ports:
+      - 6379:6379
+    environment:
+      - REDIS_PASSWORD=redis
+    volumes:
+      - redis-data:/data
+
+volumes:
+  postgres_data:
+  redis-data:
