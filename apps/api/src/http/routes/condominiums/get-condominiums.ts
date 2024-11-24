@@ -35,23 +35,26 @@ export async function getCondominiumRoute(app: FastifyInstance) {
           params: z.object({
             condominiumId: z.string(),
           }),
-          // response: {
-          //   200: z.object({
-          //     message: z.literal('Condominium successfully fetched'),
-          //     condominium: condominiumSchema,
-          //   }),
-          //   400: z.object({
-          //     message: z.literal(
-          //       'Condominium with this address already exists',
-          //     ),
-          //   }),
-          //   401: z.object({
-          //     message: z.literal('Invalid auth token'),
-          //   }),
-          //   500: z.object({
-          //     message: z.string(),
-          //   }),
-          // },
+          response: {
+            200: z.object({
+              message: z.literal('Condominium successfully fetched'),
+              condominium: condominiumSchema,
+            }),
+            400: z.object({
+              message: z.literal(
+                'Condominium with this address already exists',
+              ),
+            }),
+            401: z.object({
+              message: z.tuple([
+                z.literal('You are not allowed to access this condominium'),
+                z.literal('Invalid auth token'),
+              ]),
+            }),
+            500: z.object({
+              message: z.string(),
+            }),
+          },
         },
       },
       async (req, res) => {
@@ -59,9 +62,13 @@ export async function getCondominiumRoute(app: FastifyInstance) {
 
         const { condominiumId } = req.params
 
+        console.log('condominiumId', condominiumId)
+
         const cachedCondominium = await getCache<Condominium>(
           CACHE_KEYS.condominium(condominiumId),
         )
+
+        console.log('cachedCondominium', cachedCondominium)
 
         if (cachedCondominium)
           return res.status(200).send({
@@ -71,6 +78,8 @@ export async function getCondominiumRoute(app: FastifyInstance) {
 
         const { condominium } = await req.getUserMembership(condominiumId)
 
+        console.log('condominium', condominium)
+
         if (!condominium) throw new NotFoundError('Condominium not found')
 
         const authCondominium = condominiumAuthSchema.parse({
@@ -78,7 +87,9 @@ export async function getCondominiumRoute(app: FastifyInstance) {
           isOwner: condominium.ownerId === userId,
         })
 
-        const { cannot } = await getPermissions(userId, condominium.role)
+        console.log('authCondominium', authCondominium)
+
+        const { cannot } = getPermissions(userId, condominium.role)
 
         if (cannot('get', authCondominium))
           throw new UnauthorizedError(

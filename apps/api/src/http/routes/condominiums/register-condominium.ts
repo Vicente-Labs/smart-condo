@@ -86,7 +86,7 @@ export async function registerCondominiumRoute(app: FastifyInstance) {
 
           await setCache(
             CACHE_KEYS.userCondominiums(ownerId),
-            JSON.stringify([condominium]),
+            JSON.stringify([{ ...condominium, isOwner: true }]),
             'LONG',
           )
 

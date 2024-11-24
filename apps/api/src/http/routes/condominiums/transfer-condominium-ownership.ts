@@ -29,7 +29,11 @@ export async function transferCondominiumOwnershipRoute(app: FastifyInstance) {
             newOwnerId: z.string(),
           }),
           response: {
-            204: z.null(),
+            200: z.object({
+              message: z.literal(
+                'Condominium ownership transferred successfully',
+              ),
+            }),
             400: z.object({
               message: z.string(),
             }),
@@ -72,7 +76,9 @@ export async function transferCondominiumOwnershipRoute(app: FastifyInstance) {
         invalidateCache(CACHE_KEYS.condominium(condominiumId))
         invalidateCache(CACHE_KEYS.userCondominiums(condominium.ownerId))
 
-        return res.status(204).send()
+        return res.status(200).send({
+          message: 'Condominium ownership transferred successfully',
+        })
       },
     )
 }

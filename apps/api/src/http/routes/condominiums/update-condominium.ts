@@ -31,7 +31,7 @@ export async function updateCondominiumRoute(app: FastifyInstance) {
             logoUrl: z.string().optional(),
           }),
           response: {
-            201: z.object({
+            200: z.object({
               message: z.literal('Condominium updated successfully'),
             }),
             400: z.object({
@@ -79,7 +79,7 @@ export async function updateCondominiumRoute(app: FastifyInstance) {
         invalidateCache(CACHE_KEYS.condominium(condominiumId))
         invalidateCache(CACHE_KEYS.userCondominiums(condominium.ownerId))
 
-        return res.status(201).send({
+        return res.status(200).send({
           message: 'Condominium updated successfully',
         })
       },

@@ -27,7 +27,9 @@ export async function deleteCondominiumRoute(app: FastifyInstance) {
             condominiumId: z.string(),
           }),
           response: {
-            204: z.null(),
+            200: z.object({
+              message: z.literal('Condominium deleted successfully'),
+            }),
             400: z.object({
               message: z.literal('Condominium not found'),
             }),
@@ -71,7 +73,9 @@ export async function deleteCondominiumRoute(app: FastifyInstance) {
           )
           await invalidateCache(CACHE_KEYS.membership(ownerId, condominiumId))
 
-          return res.status(204).send()
+          return res.status(200).send({
+            message: 'Condominium deleted successfully',
+          })
         } catch (error) {
           throw new BadRequestError('Condominium not found')
         }

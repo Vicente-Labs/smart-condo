@@ -25,7 +25,7 @@ export async function makeCommonSpaceUnavailableRoute(app: FastifyInstance) {
             id: z.string(),
           }),
           response: {
-            204: z.object({
+            200: z.object({
               message: z.literal('Common space inactivated successfully'),
             }),
             400: z.object({
@@ -83,7 +83,7 @@ export async function makeCommonSpaceUnavailableRoute(app: FastifyInstance) {
           })
           .where(eq(commonSpaces.id, id))
 
-        return res.status(201).send({
+        return res.status(200).send({
           message: 'Common space inactivated successfully',
         })
       },

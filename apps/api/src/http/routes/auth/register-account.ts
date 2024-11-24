@@ -23,7 +23,9 @@ export async function registerAccountRoute(app: FastifyInstance) {
           password: z.string().min(8, 'Password is required'),
         }),
         response: {
-          204: z.null(),
+          201: z.object({
+            message: z.literal('User created successfully'),
+          }),
           400: z.object({
             message: z.literal('User with same e-mail already exists.'),
           }),
@@ -53,7 +55,9 @@ export async function registerAccountRoute(app: FastifyInstance) {
         passwordHash,
       })
 
-      return res.status(204).send()
+      return res.status(201).send({
+        message: 'User created successfully',
+      })
     },
   )
 }

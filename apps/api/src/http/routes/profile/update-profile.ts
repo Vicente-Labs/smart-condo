@@ -17,6 +17,9 @@ export async function updateProfileRoute(app: FastifyInstance) {
       '/profile',
       {
         schema: {
+          tags: ['profile'],
+          summary: 'Update user profile',
+          security: [{ bearerAuth: [] }],
           body: z.object({
             name: z.string().min(2).max(100),
             email: z.string().email(),
@@ -24,6 +27,20 @@ export async function updateProfileRoute(app: FastifyInstance) {
             bio: z.string().optional(),
             avatarUrl: z.string().optional(),
           }),
+          response: {
+            200: z.object({
+              message: z.literal('Profile updated successfully'),
+            }),
+            400: z.object({
+              message: z.literal('Email already in use'),
+            }),
+            401: z.object({
+              message: z.literal('Invalid auth token'),
+            }),
+            500: z.object({
+              message: z.string(),
+            }),
+          },
         },
       },
       async (req, res) => {
@@ -45,7 +62,9 @@ export async function updateProfileRoute(app: FastifyInstance) {
 
         await invalidateCache(CACHE_KEYS.profile(userId))
 
-        return res.status(204).send()
+        return res.status(200).send({
+          message: 'Profile updated successfully',
+        })
       },
     )
 }
