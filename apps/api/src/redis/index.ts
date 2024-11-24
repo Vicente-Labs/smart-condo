@@ -24,6 +24,7 @@ export const CACHE_KEYS = {
     `bookings:${userId}:${condominiumId}`,
   booking: (userId: string, bookingId: string) =>
     `booking:${userId}:${bookingId}`,
+  poll: (pollId: string) => `poll:${pollId}`,
 } as const
 
 export const CACHE_TIMES = {
