@@ -2,11 +2,12 @@ version: '3.8'
 
 services:
   db:
-    container_name: smart_condo_db
+    container_name: smart_condo
     image: bitnami/postgresql:latest
     environment:
       POSTGRES_USER: docker
       POSTGRES_PASSWORD: docker
+      POSTGRES_DB: smart_condo
       POSTGRESQL_REPLICATION_USE_PASSFILE: "no"
 
     volumes:
