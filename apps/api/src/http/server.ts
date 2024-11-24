@@ -17,7 +17,8 @@ import { authenticateWithPasswordRoute } from './routes/auth/authenticate-with-p
 import { registerAccountRoute } from './routes/auth/register-account'
 import { bookCommonSpaceRoute } from './routes/common-spaces/book-common-space'
 import { fetchCommonSpacesRoute } from './routes/common-spaces/fetch-common-places'
-import { registerCommonSpaceRoute } from './routes/common-spaces/register-common-place'
+import { makeCommonSpaceUnavailableRoute } from './routes/common-spaces/make-common-space-unavailable'
+import { registerCommonSpaceRoute } from './routes/common-spaces/register-common-space'
 import { deleteCondominiumRoute } from './routes/condominiums/delete-condominium'
 import { fetchCondominiumsRoute } from './routes/condominiums/fetch-condominiums'
 import { getCondominiumRoute } from './routes/condominiums/get-condominiums'
@@ -97,6 +98,7 @@ app.register(getCondominiumRoute)
 app.register(registerCommonSpaceRoute)
 app.register(fetchCommonSpacesRoute)
 app.register(bookCommonSpaceRoute)
+app.register(makeCommonSpaceUnavailableRoute)
 
 app.listen({
   host: '0.0.0.0',
