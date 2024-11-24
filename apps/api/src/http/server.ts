@@ -23,6 +23,7 @@ import { transferCondominiumOwnershipRoute } from './routes/condominiums/transfe
 import { updateCondominiumRoute } from './routes/condominiums/update-condominium'
 import { getProfileRoute } from './routes/profile/get-profile'
 import { getUserProfileRoute } from './routes/profile/get-user-profile'
+import { updateProfileRoute } from './routes/profile/update-profile'
 
 const app = fastify({
   logger: {
@@ -81,6 +82,7 @@ app.register(authenticateWithPasswordRoute)
 
 app.register(getUserProfileRoute)
 app.register(getProfileRoute)
+app.register(updateProfileRoute)
 
 app.register(registerCondominiumRoute)
 app.register(updateCondominiumRoute)

@@ -13,6 +13,7 @@ export const CACHE_KEYS = {
   permissions: (userId: string, role: string) =>
     `permissions:${userId}:${role}`,
   userCondominiums: (userId: string) => `user:${userId}:condominiums`,
+  profile: (userId: string) => `profile:${userId}`,
 } as const
 
 export const CACHE_TIMES = {

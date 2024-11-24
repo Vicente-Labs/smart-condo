@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { db } from '@/db'
 import { users } from '@/db/schemas'
 import { auth } from '@/http/middlewares/auth'
+import { CACHE_KEYS, getCache, setCache } from '@/redis'
 
 import { BadRequestError } from '../../_errors/bad-request-errors'
 
@@ -47,6 +48,20 @@ export async function getProfileRoute(app: FastifyInstance) {
       async (req, res) => {
         const { sub: userId } = await req.getCurrentUserId()
 
+        const cachedProfile = await getCache<{
+          id: string
+          name: string
+          email: string
+          phone: string
+          avatarUrl: string | null
+          updatedAt: Date
+          createdAt: Date
+        }>(CACHE_KEYS.profile(userId))
+
+        if (cachedProfile) {
+          return res.status(200).send({ user: cachedProfile })
+        }
+
         const user = await db
           .select({
             id: users.id,
@@ -62,6 +77,8 @@ export async function getProfileRoute(app: FastifyInstance) {
 
         if (!user || user.length <= 0)
           throw new BadRequestError('User not found.')
+
+        await setCache(CACHE_KEYS.profile(userId), JSON.stringify(user[0]))
 
         return res.status(200).send({ user: user[0] })
       },
