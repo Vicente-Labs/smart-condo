@@ -16,6 +16,8 @@ export const CACHE_KEYS = {
   profile: (userId: string) => `profile:${userId}`,
   commonSpace: (id: string, condominiumId: string) =>
     `condominium:${condominiumId}:common-space:${id}`,
+  commonSpaces: (condominiumId: string) =>
+    `condominium:${condominiumId}:common-spaces`,
 } as const
 
 export const CACHE_TIMES = {

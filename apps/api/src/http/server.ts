@@ -12,6 +12,7 @@ import {
 
 import { env } from '@/env'
 
+import { fetchCommonSpacesRoute } from './common-spaces/fetch-common-places'
 import { registerCommonSpaceRoute } from './common-spaces/register-common-place'
 import { errorHandler } from './error-handler'
 import { authenticateWithPasswordRoute } from './routes/auth/authenticate-with-password'
@@ -93,6 +94,7 @@ app.register(fetchCondominiumsRoute)
 app.register(getCondominiumRoute)
 
 app.register(registerCommonSpaceRoute)
+app.register(fetchCommonSpacesRoute)
 
 app.listen({
   host: '0.0.0.0',

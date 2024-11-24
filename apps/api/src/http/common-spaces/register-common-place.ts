@@ -18,7 +18,7 @@ export async function registerCommonSpaceRoute(app: FastifyInstance) {
       '/condominiums/:condominiumId/common-spaces',
       {
         schema: {
-          tags: ['condominiums'],
+          tags: ['common-spaces'],
           summary: 'Register a common space',
           security: [{ bearerAuth: [] }],
           params: z.object({
