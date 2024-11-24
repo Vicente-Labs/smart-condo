@@ -19,6 +19,7 @@ import { bookCommonSpaceRoute } from './routes/common-spaces/book-common-space'
 import { fetchCommonSpacesRoute } from './routes/common-spaces/fetch-common-places'
 import { makeCommonSpaceUnavailableRoute } from './routes/common-spaces/make-common-space-unavailable'
 import { registerCommonSpaceRoute } from './routes/common-spaces/register-common-space'
+import { updateCommonSpaceRoute } from './routes/common-spaces/update-common-space'
 import { deleteCondominiumRoute } from './routes/condominiums/delete-condominium'
 import { fetchCondominiumsRoute } from './routes/condominiums/fetch-condominiums'
 import { getCondominiumRoute } from './routes/condominiums/get-condominiums'
@@ -99,6 +100,7 @@ app.register(registerCommonSpaceRoute)
 app.register(fetchCommonSpacesRoute)
 app.register(bookCommonSpaceRoute)
 app.register(makeCommonSpaceUnavailableRoute)
+app.register(updateCommonSpaceRoute)
 
 app.listen({
   host: '0.0.0.0',
