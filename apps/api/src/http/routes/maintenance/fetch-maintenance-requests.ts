@@ -1,5 +1,5 @@
 import { maintenanceRequestSchema as authMaintenanceRequestSchema } from '@smart-condo/auth'
-import { eq } from 'drizzle-orm'
+import { desc, eq } from 'drizzle-orm'
 import { FastifyInstance } from 'fastify'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
@@ -36,6 +36,9 @@ export async function fetchMaintenanceRequestsRoute(app: FastifyInstance) {
           params: z.object({
             condominiumId: z.string(),
           }),
+          querystring: z.object({
+            page: z.number().default(1),
+          }),
           response: {
             200: z.object({
               message: z.literal('Maintenance requests fetched successfully'),
@@ -60,10 +63,15 @@ export async function fetchMaintenanceRequestsRoute(app: FastifyInstance) {
         const { sub: userId } = await req.getCurrentUserId()
         const { condominiumId } = req.params
 
+        const { page } = req.query
+
         const maintenanceRequest = await db
           .select()
           .from(maintenanceRequests)
           .where(eq(maintenanceRequests.condominiumId, condominiumId))
+          .orderBy(desc(maintenanceRequests.createdAt))
+          .limit(20)
+          .offset((page - 1) * 20)
 
         if (!maintenanceRequest || maintenanceRequest.length <= 0)
           throw new BadRequestError('Maintenance request not found')
