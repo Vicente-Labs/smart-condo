@@ -8,6 +8,7 @@ import { polls } from '@/db/schemas/poll'
 import { pollOptions } from '@/db/schemas/poll-options'
 import { UnauthorizedError } from '@/http/_errors/unauthorized-error'
 import { auth } from '@/http/middlewares/auth'
+import { sendNotification } from '@/notifications'
 import { getPermissions } from '@/utils/get-permissions'
 
 export async function createPollRoute(app: FastifyInstance) {
@@ -95,7 +96,14 @@ export async function createPollRoute(app: FastifyInstance) {
           return poll
         })
 
-        // TODO: add notification
+        await sendNotification({
+          type: 'POLL_CREATED',
+          notificationTo: 'ALL',
+          data: {
+            pollId: poll.id,
+            title: poll.title,
+          },
+        })
 
         return res.status(201).send({
           message: 'Poll created successfully',

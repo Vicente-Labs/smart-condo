@@ -4,8 +4,10 @@ import { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
 
 import { db } from '@/db'
-import { bookings } from '@/db/schemas'
+import { bookings, commonSpaces } from '@/db/schemas'
+import { BadRequestError } from '@/http/_errors/bad-request-errors'
 import { auth } from '@/http/middlewares/auth'
+import { sendNotification } from '@/notifications'
 import { CACHE_KEYS, getCache, invalidateCache, setCache } from '@/redis'
 
 export async function revokeBookingRoute(app: FastifyInstance) {
@@ -43,6 +45,15 @@ export async function revokeBookingRoute(app: FastifyInstance) {
 
         const { bookingId } = req.params
 
+        const booking = await db
+          .select()
+          .from(bookings)
+          .where(eq(bookings.id, bookingId))
+          .leftJoin(commonSpaces, eq(bookings.commonSpaceId, commonSpaces.id))
+
+        if (!booking || booking.length <= 0 || !booking[0].common_spaces)
+          throw new BadRequestError('Booking not found')
+
         const [deletedBooking] = await db
           .delete(bookings)
           .where(and(eq(bookings.id, bookingId), eq(bookings.userId, userId)))
@@ -68,6 +79,18 @@ export async function revokeBookingRoute(app: FastifyInstance) {
         }
 
         await invalidateCache(CACHE_KEYS.booking(userId, deletedBooking.id))
+
+        await sendNotification({
+          type: 'BOOKING_REVOKED',
+          notificationTo: 'USER',
+          data: {
+            bookingId: deletedBooking.id,
+            condominiumId: deletedBooking.condominiumId,
+            commonSpaceId: deletedBooking.commonSpaceId,
+            commonSpaceName: booking[0].common_spaces.name,
+            bookingTime: deletedBooking.date,
+          },
+        })
 
         return res.status(200).send({
           message: 'Booking revoked successfully',

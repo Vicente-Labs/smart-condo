@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { db } from '@/db'
 import { commonSpaces } from '@/db/schemas'
 import { auth } from '@/http/middlewares/auth'
+import { sendNotification } from '@/notifications'
 import { CACHE_KEYS, setCache } from '@/redis'
 import { getPermissions } from '@/utils/get-permissions'
 
@@ -78,6 +79,16 @@ export async function registerCommonSpaceRoute(app: FastifyInstance) {
           JSON.stringify(commonSpace),
           'LONG',
         )
+
+        await sendNotification({
+          type: 'COMMON_SPACE_CREATED',
+          notificationTo: 'ALL',
+          data: {
+            condominiumId,
+            commonSpaceId: commonSpace.id,
+            name: commonSpace.name,
+          },
+        })
 
         return res.status(201).send({
           message: 'Common space created successfully',

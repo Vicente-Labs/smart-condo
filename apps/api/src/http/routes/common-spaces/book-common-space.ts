@@ -9,6 +9,7 @@ import { bookings, commonSpaces, condominiumResidents } from '@/db/schemas'
 import { BadRequestError } from '@/http/_errors/bad-request-errors'
 import { UnauthorizedError } from '@/http/_errors/unauthorized-error'
 import { auth } from '@/http/middlewares/auth'
+import { sendNotification } from '@/notifications'
 import { getPermissions } from '@/utils/get-permissions'
 
 export async function bookCommonSpaceRoute(app: FastifyInstance) {
@@ -124,6 +125,17 @@ export async function bookCommonSpaceRoute(app: FastifyInstance) {
             date,
           })
           .returning()
+
+        await sendNotification({
+          type: 'COMMON_SPACE_BOOKED',
+          userId,
+          data: {
+            condominiumId: condominium.id,
+            commonSpaceId: id,
+            bookingTime: date,
+          },
+          notificationTo: 'USER',
+        })
 
         return res.status(201).send({
           message: 'Booking created successfully',

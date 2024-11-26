@@ -1,4 +1,5 @@
 import { pollSchema as authPollSchema } from '@smart-condo/auth'
+import { notificationService } from '@your-org/notifications'
 import { and, eq, sql } from 'drizzle-orm'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
@@ -108,6 +109,16 @@ export async function voteOnPollRoute(app: FastifyInstance) {
         })
 
         invalidateCache(CACHE_KEYS.poll(pollId))
+
+        await notificationService.sendNotification({
+          type: 'POLL_VOTED',
+          userId,
+          data: {
+            pollId,
+            choice: optionId,
+            // Add other relevant voting details
+          },
+        })
 
         return res.status(201).send({
           message: 'Vote registered successfully',
