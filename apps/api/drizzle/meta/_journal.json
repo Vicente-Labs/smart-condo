@@ -71,6 +71,13 @@
       "when": 1732440401097,
       "tag": "20241124092641_add-bio-to-users",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1732600259038,
+      "tag": "20241126055059_add-poll-db-structure",
+      "breakpoints": true
     }
   ]
 }
