@@ -1,3 +1,4 @@
+import { pollSchema as authPollSchema } from '@smart-condo/auth'
 import { and, eq } from 'drizzle-orm'
 import type { FastifyInstance } from 'fastify'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
@@ -9,8 +10,10 @@ import { polls } from '@/db/schemas/poll'
 import { pollOptions } from '@/db/schemas/poll-options'
 import { pollVotes } from '@/db/schemas/poll-votes'
 import { BadRequestError } from '@/http/_errors/bad-request-errors'
+import { UnauthorizedError } from '@/http/_errors/unauthorized-error'
 import { auth } from '@/http/middlewares/auth'
 import { CACHE_KEYS, getCache, setCache } from '@/redis'
+import { getPermissions } from '@/utils/get-permissions'
 
 const pollOptionsSchema = z.object({
   id: z.string(),
@@ -71,6 +74,20 @@ export async function getPollRoute(app: FastifyInstance) {
           return res
             .status(200)
             .send({ message: 'Poll fetched successfully', poll: cachedPoll })
+
+        const { condominium } = await req.getUserMembership(condominiumId)
+
+        const { cannot } = getPermissions(userId, condominium.role)
+
+        const authPoll = authPollSchema.parse({
+          __typename: 'poll',
+          id: pollId,
+          role: condominium.role,
+          isCondominiumResident: true,
+        })
+
+        if (cannot('get', authPoll))
+          throw new UnauthorizedError('You are not allowed to get this poll')
 
         const poll = await db
           .select({

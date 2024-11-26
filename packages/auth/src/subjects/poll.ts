@@ -9,6 +9,7 @@ export const pollSubject = z.tuple([
     z.literal('get'),
     z.literal('update'),
     z.literal('delete'),
+    z.literal('vote'),
   ]),
   z.union([z.literal('poll'), pollSchema]),
 ])

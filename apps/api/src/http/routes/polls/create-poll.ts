@@ -66,6 +66,7 @@ export async function createPollRoute(app: FastifyInstance) {
           __typename: 'poll',
           id: condominiumId, // fake id cuz we don't have one yet
           role: condominium.role,
+          isCondominiumResident: true,
         })
 
         if (cannot('create', authPoll))

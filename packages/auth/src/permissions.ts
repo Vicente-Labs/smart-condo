@@ -23,5 +23,6 @@ export const permissions: Record<Role, PermissionsByRole> = {
     can(['get', 'create'], 'bookings', { isCondominiumResident: true })
     can(['update', 'revoke'], 'bookings', { ownerId: { $eq: user.id } })
     can('get', 'announcements', { isCondominiumResident: true })
+    can(['get', 'vote'], 'poll', { isCondominiumResident: true })
   },
 }

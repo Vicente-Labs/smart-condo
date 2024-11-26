@@ -1,3 +1,4 @@
+import { pollSchema as authPollSchema } from '@smart-condo/auth'
 import { and, eq, sql } from 'drizzle-orm'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
@@ -9,8 +10,10 @@ import { polls } from '@/db/schemas/poll'
 import { pollOptions } from '@/db/schemas/poll-options'
 import { pollVotes } from '@/db/schemas/poll-votes'
 import { BadRequestError } from '@/http/_errors/bad-request-errors'
+import { UnauthorizedError } from '@/http/_errors/unauthorized-error'
 import { auth } from '@/http/middlewares/auth'
 import { CACHE_KEYS, invalidateCache, redisClient } from '@/redis'
+import { getPermissions } from '@/utils/get-permissions'
 import { voting } from '@/utils/voting-pub-sub'
 
 export async function voteOnPollRoute(app: FastifyInstance) {
@@ -38,6 +41,22 @@ export async function voteOnPollRoute(app: FastifyInstance) {
 
         const { pollId, condominiumId } = req.params
         const { optionId } = req.body
+
+        const { condominium } = await req.getUserMembership(condominiumId)
+
+        const { cannot } = getPermissions(userId, condominium.role)
+
+        const authPoll = authPollSchema.parse({
+          __typename: 'poll',
+          id: pollId,
+          role: condominium.role,
+          isCondominiumResident: true,
+        })
+
+        if (cannot('vote', authPoll))
+          throw new UnauthorizedError(
+            'You are not allowed to vote on this poll',
+          )
 
         const poll = await db
           .select({
