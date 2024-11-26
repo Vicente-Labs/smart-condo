@@ -13,6 +13,7 @@ import { bookingsSubject } from './subjects/bookings'
 import { commonSpacesSubject } from './subjects/common-space'
 import { condominiumSubject } from './subjects/condominium'
 import { inviteSubject } from './subjects/invite'
+import { maintenanceRequestSubject } from './subjects/maintenance-request'
 import { pollSubject } from './subjects/poll'
 import { userSubject } from './subjects/user'
 
@@ -23,6 +24,7 @@ export * from './subjects/condominium'
 export * from './subjects/invite'
 export * from './subjects/user'
 export * from './subjects/poll'
+export * from './subjects/maintenance-request'
 
 export * from './role'
 
@@ -31,6 +33,7 @@ export * from './models/booking'
 export * from './models/common-space'
 export * from './models/condominium'
 export * from './models/poll'
+export * from './models/maintenance-request'
 
 const appAbilitiesSchema = z.union([
   userSubject,
@@ -40,6 +43,7 @@ const appAbilitiesSchema = z.union([
   bookingsSubject,
   announcementSubject,
   pollSubject,
+  maintenanceRequestSubject,
   z.tuple([z.literal('manage'), z.literal('all')]),
 ])
 

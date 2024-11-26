@@ -11,7 +11,9 @@ type BookingNotificationsType = 'BOOKING_REVOKED'
 
 type InviteNotificationsType = 'INVITE_CREATED' | 'INVITE_ACCEPTED'
 
-type MaintenanceRequestNotificationsType = 'MAINTENANCE_REQUEST'
+type MaintenanceRequestNotificationsType =
+  | 'MAINTENANCE_REQUEST_CREATED'
+  | 'MAINTENANCE_REQUEST_UPDATED'
 
 export interface Notification {
   type:

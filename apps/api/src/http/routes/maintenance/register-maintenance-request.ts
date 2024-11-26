@@ -12,7 +12,7 @@ export async function registerMaintenanceRequestRoute(app: FastifyInstance) {
     .register(auth)
     .withTypeProvider<ZodTypeProvider>()
     .post(
-      '/condominium/:condominiumId/maintenance/request',
+      '/condominium/:condominiumId/maintenances',
       {
         schema: {
           tags: ['maintenance'],
@@ -59,7 +59,7 @@ export async function registerMaintenanceRequestRoute(app: FastifyInstance) {
         })
 
         await sendNotification({
-          type: 'MAINTENANCE_REQUEST',
+          type: 'MAINTENANCE_REQUEST_CREATED',
           notificationTo: 'ADMIN',
           data: {
             userId,
