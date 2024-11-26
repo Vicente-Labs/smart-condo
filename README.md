@@ -7,10 +7,10 @@ A platform for managing condominiums and buildings, including features such as c
 - [x] It should be possible to authenticate and log in
 - [x] It should be possible to view the profile of a logged-in user
 - [x] It should be possible to list the condominiums the user is registered in
-- [ ] It should be possible for the user to register and manage common area reservations
-- [ ] It should be possible to create and manage votes within the condominium
+- [x] It should be possible for the user to register and manage common area reservations
+- [x] It should be possible to create and manage votes within the condominium
 - [x] It should be possible for residents to participate in votes
-- [ ] It should be possible for the user to register and view important notifications
+- [ ] It should be possible for the user to notifications - partially done (front-end is missing)
 - [ ] It should be possible for the user to create and manage maintenance requests
 - [ ] It should be possible for the condominium administrator to create and manage announcements and documents
 - [ ] It should be possible for the condominium administrator to register and manage employees
@@ -22,8 +22,8 @@ A platform for managing condominiums and buildings, including features such as c
 
 ## Rns (Business Rules)
 - [x] The user should not be able to register with a duplicate email
-- [ ] A user cannot reserve more than one common area at the same time
-- [ ] Polls can only be created by administrators
+- [x] A user cannot reserve more than one common area at the same time
+- [x] Polls can only be created by administrators
 - [x] A user cannot vote more than once in a voting session
 - [ ] Maintenance requests must be validated and prioritized by the administrator
 - [ ] The administrator can manage shared announcements and documents
@@ -35,7 +35,7 @@ A platform for managing condominiums and buildings, including features such as c
 ## RNFs (Non-Functional Requirements)
 - [x] User passwords must be encrypted
 - [x] Application data must be persisted in PostgreSQL
-- [ ] All data lists (users, reservations, votes) must be paginated with 20 items per page
+- [x] All data lists (users, reservations, votes) must be paginated with 20 items per page
 - [x] The system must use authentication via JWT (JSON Web Token)
 - [ ] The system must be responsive and optimized for various devices (desktop, tablet, mobile)
 - [ ] The system must ensure high availability and be scalable to handle large amounts of users and data
