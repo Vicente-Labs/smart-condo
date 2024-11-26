@@ -1,3 +1,4 @@
+import { pollSchema } from '@smart-condo/auth'
 import type { FastifyInstance } from 'fastify'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
@@ -5,7 +6,9 @@ import { z } from 'zod'
 import { db } from '@/db'
 import { polls } from '@/db/schemas/poll'
 import { pollOptions } from '@/db/schemas/poll-options'
+import { UnauthorizedError } from '@/http/_errors/unauthorized-error'
 import { auth } from '@/http/middlewares/auth'
+import { getPermissions } from '@/utils/get-permissions'
 
 export async function createPollRoute(app: FastifyInstance) {
   app
@@ -54,6 +57,19 @@ export async function createPollRoute(app: FastifyInstance) {
         const { title, description, options } = req.body
 
         const { condominiumId } = req.params
+
+        const { condominium } = await req.getUserMembership(condominiumId)
+
+        const { cannot } = getPermissions(authorId, condominium.role)
+
+        const authPoll = pollSchema.parse({
+          __typename: 'poll',
+          id: condominiumId, // fake id cuz we don't have one yet
+          role: condominium.role,
+        })
+
+        if (cannot('create', authPoll))
+          throw new UnauthorizedError(`You're not allowed to create polls`)
 
         const [poll] = await db.transaction(async (tx) => {
           const poll = await tx

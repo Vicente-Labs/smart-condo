@@ -9,7 +9,7 @@ A platform for managing condominiums and buildings, including features such as c
 - [x] It should be possible to list the condominiums the user is registered in
 - [ ] It should be possible for the user to register and manage common area reservations
 - [ ] It should be possible to create and manage votes within the condominium
-- [ ] It should be possible for residents to participate in votes
+- [x] It should be possible for residents to participate in votes
 - [ ] It should be possible for the user to register and view important notifications
 - [ ] It should be possible for the user to create and manage maintenance requests
 - [ ] It should be possible for the condominium administrator to create and manage announcements and documents
@@ -22,10 +22,9 @@ A platform for managing condominiums and buildings, including features such as c
 
 ## Rns (Business Rules)
 - [x] The user should not be able to register with a duplicate email
-- [ ] The administrator must validate all common area reservations before confirming them
 - [ ] A user cannot reserve more than one common area at the same time
-- [ ] Votes can only be created by administrators
-- [ ] A user cannot vote more than once in a voting session
+- [ ] Polls can only be created by administrators
+- [x] A user cannot vote more than once in a voting session
 - [ ] Maintenance requests must be validated and prioritized by the administrator
 - [ ] The administrator can manage shared announcements and documents
 - [ ] The administrator can register and remove condominium employees
