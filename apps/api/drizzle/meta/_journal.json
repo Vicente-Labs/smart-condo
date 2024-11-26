@@ -78,6 +78,13 @@
       "when": 1732600259038,
       "tag": "20241126055059_add-poll-db-structure",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1732634463215,
+      "tag": "20241126152103_add-maintenance-request-db-structure",
+      "breakpoints": true
     }
   ]
 }
