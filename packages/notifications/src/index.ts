@@ -11,13 +11,16 @@ type BookingNotificationsType = 'BOOKING_REVOKED'
 
 type InviteNotificationsType = 'INVITE_CREATED' | 'INVITE_ACCEPTED'
 
+type MaintenanceRequestNotificationsType = 'MAINTENANCE_REQUEST'
+
 export interface Notification {
   type:
     | CommonSpaceBookedNotificationsType
     | PollNotificationsType
     | BookingNotificationsType
     | InviteNotificationsType
-  notificationTo: 'ALL' | 'USER'
+    | MaintenanceRequestNotificationsType
+  notificationTo: 'ALL' | 'USER' | 'ADMIN'
   userId?: string | null
   data: unknown
 }
