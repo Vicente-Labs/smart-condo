@@ -1,3 +1,4 @@
+import { commonSpaceSchema } from '@smart-condo/auth'
 import { and, eq } from 'drizzle-orm'
 import type { FastifyInstance } from 'fastify'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
@@ -9,7 +10,6 @@ import { BadRequestError } from '@/http/_errors/bad-request-errors'
 import { UnauthorizedError } from '@/http/_errors/unauthorized-error'
 import { auth } from '@/http/middlewares/auth'
 import { getPermissions } from '@/utils/get-permissions'
-import { commonSpaceSchema } from '~/packages/auth/src'
 
 export async function bookCommonSpaceRoute(app: FastifyInstance) {
   app
@@ -89,6 +89,30 @@ export async function bookCommonSpaceRoute(app: FastifyInstance) {
           )
 
         const { date, estimatedParticipants } = req.body
+
+        const spaceAlreadyBookedOnDate = await db
+          .select()
+          .from(bookings)
+          .where(and(eq(bookings.commonSpaceId, id), eq(bookings.date, date)))
+
+        const commonSpaceAlreadyBookedOnDate =
+          spaceAlreadyBookedOnDate.length > 0
+
+        const alreadyBookAnySpaceOnDate = await db
+          .select()
+          .from(bookings)
+          .where(and(eq(bookings.userId, userId), eq(bookings.date, date)))
+
+        const alreadyHasAnActiveBookingOnThisDate =
+          alreadyBookAnySpaceOnDate.length > 0
+
+        if (
+          commonSpaceAlreadyBookedOnDate ||
+          alreadyHasAnActiveBookingOnThisDate
+        )
+          throw new BadRequestError(
+            'Common space already booked on this date or already has an active booking on this date',
+          )
 
         const booking = await db
           .insert(bookings)
