@@ -68,6 +68,7 @@ export async function registerMaintenanceRequestRoute(app: FastifyInstance) {
             isCommonSpace,
             description,
           },
+          channel: 'both',
         })
 
         return res.status(200).send({

@@ -89,6 +89,7 @@ export async function createInviteRoute(app: FastifyInstance) {
               condominiumId,
               condominiumName: condominium.name,
             },
+            channel: 'email',
           })
 
         /* NOTE: 

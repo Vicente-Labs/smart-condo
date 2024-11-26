@@ -90,6 +90,7 @@ export async function revokeBookingRoute(app: FastifyInstance) {
             commonSpaceName: booking[0].common_spaces.name,
             bookingTime: deletedBooking.date,
           },
+          channel: 'both',
         })
 
         return res.status(200).send({

@@ -81,6 +81,7 @@ export async function acceptInviteRoute(app: FastifyInstance) {
             condominiumName: condominium[0].name,
             residentName: invite.name,
           },
+          channel: 'email',
           userId,
         })
 

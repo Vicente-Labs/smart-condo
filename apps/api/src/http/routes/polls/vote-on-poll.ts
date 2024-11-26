@@ -1,5 +1,4 @@
 import { pollSchema as authPollSchema } from '@smart-condo/auth'
-import { notificationService } from '@your-org/notifications'
 import { and, eq, sql } from 'drizzle-orm'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
@@ -13,6 +12,7 @@ import { pollVotes } from '@/db/schemas/poll-votes'
 import { BadRequestError } from '@/http/_errors/bad-request-errors'
 import { UnauthorizedError } from '@/http/_errors/unauthorized-error'
 import { auth } from '@/http/middlewares/auth'
+import { sendNotification } from '@/notifications'
 import { CACHE_KEYS, invalidateCache, redisClient } from '@/redis'
 import { getPermissions } from '@/utils/get-permissions'
 import { voting } from '@/utils/voting-pub-sub'
@@ -110,14 +110,15 @@ export async function voteOnPollRoute(app: FastifyInstance) {
 
         invalidateCache(CACHE_KEYS.poll(pollId))
 
-        await notificationService.sendNotification({
+        await sendNotification({
           type: 'POLL_VOTED',
+          notificationTo: 'USER',
           userId,
           data: {
             pollId,
             choice: optionId,
-            // Add other relevant voting details
           },
+          channel: 'email',
         })
 
         return res.status(201).send({

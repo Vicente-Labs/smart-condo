@@ -88,6 +88,7 @@ export async function registerCommonSpaceRoute(app: FastifyInstance) {
             commonSpaceId: commonSpace.id,
             name: commonSpace.name,
           },
+          channel: 'both',
         })
 
         return res.status(201).send({

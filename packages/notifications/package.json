@@ -7,7 +7,9 @@
   "devDependencies": {
     "@smart-condo/eslint-config": "workspace:*",
     "@smart-condo/prettier": "workspace:*",
-    "@smart-condo/tsconfig": "workspace:*"
+    "@smart-condo/tsconfig": "workspace:*",
+    "@types/amqplib": "^0.10.5",
+    "@types/node": "^20"
   },
   "eslintConfig": {
     "extends": [
@@ -16,6 +18,7 @@
   },
   "prettier": "@smart-condo/prettier",
   "dependencies": {
-    "@aws-sdk/client-sqs": "^3.x.x"
+    "@aws-sdk/client-sqs": "^3.x.x",
+    "amqplib": "^0.10.5"
   }
 }

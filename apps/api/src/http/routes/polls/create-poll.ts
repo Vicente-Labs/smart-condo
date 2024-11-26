@@ -103,6 +103,7 @@ export async function createPollRoute(app: FastifyInstance) {
             pollId: poll.id,
             title: poll.title,
           },
+          channel: 'both',
         })
 
         return res.status(201).send({

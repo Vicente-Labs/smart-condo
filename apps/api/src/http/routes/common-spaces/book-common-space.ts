@@ -135,6 +135,7 @@ export async function bookCommonSpaceRoute(app: FastifyInstance) {
             bookingTime: date,
           },
           notificationTo: 'USER',
+          channel: 'email',
         })
 
         return res.status(201).send({
