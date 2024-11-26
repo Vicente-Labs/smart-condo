@@ -9,11 +9,14 @@ type PollNotificationsType = 'POLL_CREATED' | 'POLL_VOTED'
 
 type BookingNotificationsType = 'BOOKING_REVOKED'
 
+type InviteNotificationsType = 'INVITE_CREATED' | 'INVITE_ACCEPTED'
+
 export interface Notification {
   type:
     | CommonSpaceBookedNotificationsType
     | PollNotificationsType
     | BookingNotificationsType
+    | InviteNotificationsType
   notificationTo: 'ALL' | 'USER'
   userId?: string | null
   data: unknown

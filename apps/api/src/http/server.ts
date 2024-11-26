@@ -29,6 +29,12 @@ import { getCondominiumRoute } from './routes/condominiums/get-condominiums'
 import { registerCondominiumRoute } from './routes/condominiums/register-condominium'
 import { transferCondominiumOwnershipRoute } from './routes/condominiums/transfer-condominium-ownership'
 import { updateCondominiumRoute } from './routes/condominiums/update-condominium'
+import { acceptInviteRoute } from './routes/invites/accept-invite'
+import { createInviteRoute } from './routes/invites/create-invite'
+import { fetchInvitesRoute } from './routes/invites/fetch-invites'
+import { getPendingInvitesRoute } from './routes/invites/fetch-pending-invites'
+import { getInviteRoute } from './routes/invites/get-invite'
+import { revokeInviteRoute } from './routes/invites/revoke-invite'
 import { createPollRoute } from './routes/polls/create-poll'
 import { getPollRoute } from './routes/polls/get-poll'
 import { voteOnPollRoute } from './routes/polls/vote-on-poll'
@@ -115,6 +121,13 @@ app.register(updateBookingRoute)
 app.register(createPollRoute)
 app.register(getPollRoute)
 app.register(voteOnPollRoute)
+
+app.register(createInviteRoute)
+app.register(getInviteRoute)
+app.register(fetchInvitesRoute)
+app.register(revokeInviteRoute)
+app.register(acceptInviteRoute)
+app.register(getPendingInvitesRoute)
 
 app.listen({
   host: env.HOST,
