@@ -62,8 +62,6 @@ export async function getCondominiumRoute(app: FastifyInstance) {
 
         const { condominiumId } = req.params
 
-        console.log('condominiumId', condominiumId)
-
         const cachedCondominium = await getCache<Condominium>(
           CACHE_KEYS.condominium(condominiumId),
         )
@@ -86,8 +84,6 @@ export async function getCondominiumRoute(app: FastifyInstance) {
           ...condominium,
           isOwner: condominium.ownerId === userId,
         })
-
-        console.log('authCondominium', authCondominium)
 
         const { cannot } = getPermissions(userId, condominium.role)
 

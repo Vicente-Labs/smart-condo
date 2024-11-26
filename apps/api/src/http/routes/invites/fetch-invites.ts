@@ -1,3 +1,4 @@
+import { roleSchema } from '@smart-condo/auth'
 import { eq } from 'drizzle-orm'
 import type { FastifyInstance } from 'fastify'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
@@ -7,8 +8,8 @@ import { db } from '@/db'
 import { invites } from '@/db/schemas'
 import { UnauthorizedError } from '@/http/_errors/unauthorized-error'
 import { auth } from '@/http/middlewares/auth'
+import { CACHE_KEYS, getCache, setCache } from '@/redis'
 import { getPermissions } from '@/utils/get-permissions'
-import { roleSchema } from '~/packages/auth/src'
 
 const inviteSchema = z.object({
   status: z.enum(['PENDING', 'ACCEPTED', 'REJECTED']),
@@ -22,6 +23,8 @@ const inviteSchema = z.object({
   condominiumId: z.string(),
   role: roleSchema,
 })
+
+type Invite = z.infer<typeof inviteSchema>
 
 export async function fetchInvitesRoute(app: FastifyInstance) {
   app
@@ -64,10 +67,25 @@ export async function fetchInvitesRoute(app: FastifyInstance) {
         if (cannot('get', 'invite'))
           throw new UnauthorizedError(`You're not allowed to get group invites`)
 
+        const cachedInvites = await getCache<Invite[]>(
+          CACHE_KEYS.invites(condominiumId),
+        )
+
+        if (cachedInvites)
+          return res.status(200).send({
+            message: 'Invites fetched',
+            invites: cachedInvites,
+          })
+
         const queriedInvites = await db
           .select()
           .from(invites)
           .where(eq(invites.condominiumId, condominiumId))
+
+        await setCache(
+          CACHE_KEYS.invites(condominiumId),
+          JSON.stringify(queriedInvites),
+        )
 
         return res.status(200).send({
           message: 'Invites fetched',

@@ -8,6 +8,7 @@ import { invites } from '@/db/schemas'
 import { BadRequestError } from '@/http/_errors/bad-request-errors'
 import { UnauthorizedError } from '@/http/_errors/unauthorized-error'
 import { auth } from '@/http/middlewares/auth'
+import { CACHE_KEYS, invalidateCache } from '@/redis'
 import { getPermissions } from '@/utils/get-permissions'
 
 export async function revokeInviteRoute(app: FastifyInstance) {
@@ -68,6 +69,7 @@ export async function revokeInviteRoute(app: FastifyInstance) {
           throw new BadRequestError(`invite not found or already accepted`)
 
         await db.delete(invites).where(eq(invites.id, inviteId))
+        await invalidateCache(CACHE_KEYS.invites(inviteId))
 
         return res.status(200).send({
           message: 'Invite revoked',

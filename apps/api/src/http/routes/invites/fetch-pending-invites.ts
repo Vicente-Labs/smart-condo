@@ -1,3 +1,4 @@
+import { roleSchema } from '@smart-condo/auth'
 import { and, eq } from 'drizzle-orm'
 import type { FastifyInstance } from 'fastify'
 import { ZodTypeProvider } from 'fastify-type-provider-zod'
@@ -7,7 +8,6 @@ import { db } from '@/db'
 import { invites, users } from '@/db/schemas'
 import { BadRequestError } from '@/http/_errors/bad-request-errors'
 import { auth } from '@/http/middlewares/auth'
-import { roleSchema } from '~/packages/auth/src'
 
 const invitesSchema = z.object({
   status: z.literal('PENDING'),

@@ -86,6 +86,7 @@ export async function createInviteRoute(app: FastifyInstance) {
             data: {
               inviteId: invite.id,
               invitedBy: userId,
+              email: email.toLowerCase(),
               condominiumId,
               condominiumName: condominium.name,
             },
