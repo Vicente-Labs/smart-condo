@@ -8,6 +8,7 @@ import { db } from '@/db'
 import { maintenanceRequests } from '@/db/schemas/maintenance-requests'
 import { BadRequestError } from '@/http/_errors/bad-request-errors'
 import { auth } from '@/http/middlewares/auth'
+import { CACHE_KEYS, getCache, setCache } from '@/redis'
 import { getPermissions } from '@/utils/get-permissions'
 
 const maintenanceRequestSchema = z.object({
@@ -21,6 +22,8 @@ const maintenanceRequestSchema = z.object({
   updatedAt: z.date(),
   createdAt: z.date(),
 })
+
+type MaintenanceRequest = z.infer<typeof maintenanceRequestSchema>
 
 export async function fetchMaintenanceRequestsRoute(app: FastifyInstance) {
   app
@@ -62,8 +65,17 @@ export async function fetchMaintenanceRequestsRoute(app: FastifyInstance) {
       async (req, res) => {
         const { sub: userId } = await req.getCurrentUserId()
         const { condominiumId } = req.params
-
         const { page } = req.query
+
+        const cachedMaintenanceRequests = await getCache<MaintenanceRequest[]>(
+          CACHE_KEYS.maintenanceRequests(condominiumId, page),
+        )
+
+        if (cachedMaintenanceRequests)
+          return res.status(200).send({
+            message: 'Maintenance requests fetched successfully',
+            maintenanceRequests: cachedMaintenanceRequests,
+          })
 
         const maintenanceRequest = await db
           .select()
@@ -95,6 +107,11 @@ export async function fetchMaintenanceRequestsRoute(app: FastifyInstance) {
 
             return true
           },
+        )
+
+        await setCache(
+          CACHE_KEYS.maintenanceRequests(condominiumId, page),
+          JSON.stringify(filteredMaintenanceRequests),
         )
 
         return res.status(200).send({
