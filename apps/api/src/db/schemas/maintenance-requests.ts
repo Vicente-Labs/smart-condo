@@ -1,10 +1,17 @@
 import { createId } from '@paralleldrive/cuid2'
 import { relations } from 'drizzle-orm'
-import { boolean, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { boolean, pgEnum, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 
 import { commonSpaces } from './common-spaces'
 import { condominiums } from './condominiums'
 import { users } from './users'
+
+export const maintenanceRequestStatus = pgEnum('maintenance_request_status', [
+  'PENDING',
+  'IN_PROGRESS',
+  'COMPLETED',
+  'CANCELED',
+])
 
 export const maintenanceRequests = pgTable('maintenance_requests', {
   id: text('id')
@@ -13,6 +20,8 @@ export const maintenanceRequests = pgTable('maintenance_requests', {
 
   description: text('description').notNull(),
   isCommonSpace: boolean('is_common_space').notNull().default(false),
+
+  status: maintenanceRequestStatus('status').notNull().default('PENDING'),
 
   userId: text('user_id').references(() => users.id, { onDelete: 'set null' }),
 

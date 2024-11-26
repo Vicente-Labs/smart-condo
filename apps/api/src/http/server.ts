@@ -35,6 +35,7 @@ import { fetchInvitesRoute } from './routes/invites/fetch-invites'
 import { getPendingInvitesRoute } from './routes/invites/fetch-pending-invites'
 import { getInviteRoute } from './routes/invites/get-invite'
 import { revokeInviteRoute } from './routes/invites/revoke-invite'
+import { deleteMaintenanceRequestRoute } from './routes/maintenance/delete-maintenance-request'
 import { registerMaintenanceRequestRoute } from './routes/maintenance/register-maintenance-request'
 import { updateMaintenanceRequestRoute } from './routes/maintenance/update-maintenance-request'
 import { createPollRoute } from './routes/polls/create-poll'
@@ -133,6 +134,7 @@ app.register(getPendingInvitesRoute)
 
 app.register(registerMaintenanceRequestRoute)
 app.register(updateMaintenanceRequestRoute)
+app.register(deleteMaintenanceRequestRoute)
 
 app.listen({
   host: env.HOST,
