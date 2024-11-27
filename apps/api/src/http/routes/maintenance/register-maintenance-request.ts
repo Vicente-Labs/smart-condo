@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { db } from '@/db'
 import { maintenanceRequests } from '@/db/schemas/maintenance-requests'
 import { auth } from '@/http/middlewares/auth'
-import { sendNotification } from '@/notifications'
+import { notifications } from '@/utils/notifications-pub-sub'
 
 export async function registerMaintenanceRequestRoute(app: FastifyInstance) {
   app
@@ -58,9 +58,9 @@ export async function registerMaintenanceRequestRoute(app: FastifyInstance) {
           description,
         })
 
-        await sendNotification({
+        await notifications.publish({
           type: 'MAINTENANCE_REQUEST_CREATED',
-          notificationTo: 'ADMIN',
+          notificationTo: 'admin',
           data: {
             userId,
             condominiumId,
@@ -68,7 +68,7 @@ export async function registerMaintenanceRequestRoute(app: FastifyInstance) {
             isCommonSpace,
             description,
           },
-          channel: 'both',
+          channel: 'all',
         })
 
         return res.status(200).send({

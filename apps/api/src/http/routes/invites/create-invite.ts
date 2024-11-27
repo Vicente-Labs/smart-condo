@@ -7,8 +7,8 @@ import { db } from '@/db'
 import { invites, users } from '@/db/schemas'
 import { UnauthorizedError } from '@/http/_errors/unauthorized-error'
 import { auth } from '@/http/middlewares/auth'
-import { sendNotification } from '@/notifications'
 import { getPermissions } from '@/utils/get-permissions'
+import { notifications } from '@/utils/notifications-pub-sub'
 
 export async function createInviteRoute(app: FastifyInstance) {
   app
@@ -79,9 +79,9 @@ export async function createInviteRoute(app: FastifyInstance) {
           .where(eq(users.email, email.toLocaleLowerCase()))
 
         if (userAlreadyRegistered.length > 0)
-          await sendNotification({
+          await notifications.publish({
             type: 'INVITE_CREATED',
-            notificationTo: 'USER',
+            notificationTo: 'user',
             userId: userAlreadyRegistered[0].id,
             data: {
               inviteId: invite.id,

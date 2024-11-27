@@ -15,6 +15,7 @@ import { auth } from '@/http/middlewares/auth'
 import { sendNotification } from '@/notifications'
 import { CACHE_KEYS, invalidateCache, redisClient } from '@/redis'
 import { getPermissions } from '@/utils/get-permissions'
+import { notifications } from '@/utils/notifications-pub-sub'
 import { voting } from '@/utils/voting-pub-sub'
 
 export async function voteOnPollRoute(app: FastifyInstance) {
@@ -110,9 +111,9 @@ export async function voteOnPollRoute(app: FastifyInstance) {
 
         invalidateCache(CACHE_KEYS.poll(pollId))
 
-        await sendNotification({
+        await notifications.publish({
           type: 'POLL_VOTED',
-          notificationTo: 'USER',
+          notificationTo: 'user',
           userId,
           data: {
             pollId,

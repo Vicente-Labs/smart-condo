@@ -9,8 +9,8 @@ import { maintenanceRequests } from '@/db/schemas/maintenance-requests'
 import { BadRequestError } from '@/http/_errors/bad-request-errors'
 import { UnauthorizedError } from '@/http/_errors/unauthorized-error'
 import { auth } from '@/http/middlewares/auth'
-import { sendNotification } from '@/notifications'
 import { getPermissions } from '@/utils/get-permissions'
+import { notifications } from '@/utils/notifications-pub-sub'
 
 export async function updateMaintenanceRequestRoute(app: FastifyInstance) {
   app
@@ -97,9 +97,9 @@ export async function updateMaintenanceRequestRoute(app: FastifyInstance) {
           description,
         })
 
-        await sendNotification({
+        await notifications.publish({
           type: 'MAINTENANCE_REQUEST_UPDATED',
-          notificationTo: 'ADMIN',
+          notificationTo: 'admin',
           data: {
             userId,
             condominiumId,
@@ -107,7 +107,7 @@ export async function updateMaintenanceRequestRoute(app: FastifyInstance) {
             isCommonSpace,
             description,
           },
-          channel: 'both',
+          channel: 'all',
         })
 
         return res.status(200).send({

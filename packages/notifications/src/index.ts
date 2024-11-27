@@ -1,4 +1,4 @@
-import * as amqp from 'amqplib'
+import { SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs'
 
 type CommonSpaceBookedNotificationsType =
   | 'COMMON_SPACE_BOOKED'
@@ -22,114 +22,76 @@ export interface Notification {
     | BookingNotificationsType
     | InviteNotificationsType
     | MaintenanceRequestNotificationsType
-  notificationTo: 'ALL' | 'USER' | 'ADMIN'
-  channel: 'email' | 'push' | 'both'
+  notificationTo: 'all' | 'user' | 'admin'
+  channel: 'email' | 'push' | 'web' | 'all'
   userId?: string | null
   data: unknown
 }
 
 export class NotificationService {
-  private connection: amqp.Connection | null = null
-  private channel: amqp.Channel | null = null
-  private readonly exchangeName = 'notifications'
-  private readonly queueName = 'notifications_queue'
+  private sqs: SQSClient
+  private readonly queueUrl: string
 
-  // eslint-disable-next-line no-useless-constructor
-  constructor(private readonly url: string) {}
-
-  async connect() {
-    if (this.connection && this.channel) return
-
-    try {
-      console.log('Connecting to RabbitMQ...')
-      this.connection = await amqp.connect(this.url)
-      this.channel = await this.connection.createChannel()
-
-      await this.channel.assertExchange(this.exchangeName, 'direct', {
-        durable: true,
-      })
-      await this.channel.assertQueue(this.queueName, { durable: true })
-
-      await this.channel.bindQueue(this.queueName, this.exchangeName, 'user')
-      await this.channel.bindQueue(this.queueName, this.exchangeName, 'admin')
-      await this.channel.bindQueue(this.queueName, this.exchangeName, 'all')
-
-      console.log('Connected to RabbitMQ successfully.')
-    } catch (error) {
-      console.error('Failed to connect to RabbitMQ:', error)
-      throw error
-    }
-  }
-
-  async ensureConnection() {
-    if (!this.connection || !this.channel) {
-      console.warn('Reconnecting to RabbitMQ...')
-      await this.connect()
-    }
-  }
-
-  private async publishNotification(
-    notification: Notification,
-    routingKey: string,
+  constructor(
+    region: string,
+    queueUrl: string,
+    AWS_ACCESS_KEY_ID: string,
+    AWS_SECRET_ACCESS_KEY: string,
   ) {
-    this.channel?.publish(
-      this.exchangeName,
-      routingKey,
-      Buffer.from(JSON.stringify(notification)),
-      {
-        persistent: true,
-        messageId: notification.type,
+    this.sqs = new SQSClient({
+      region,
+      credentials: {
+        accessKeyId: AWS_ACCESS_KEY_ID,
+        secretAccessKey: AWS_SECRET_ACCESS_KEY,
       },
-    )
-    console.log('Notification sent successfully:', {
-      routingKey,
-      notification,
     })
+    this.queueUrl = queueUrl
   }
 
-  async sendNotification(notification: Notification, retries = 3) {
-    await this.ensureConnection()
+  private async sendMessage(notification: Notification) {
+    if (!this.queueUrl) {
+      throw new Error(`No queue URL found`)
+    }
 
-    const baseRoutingKey = notification.notificationTo.toLowerCase()
+    const command = new SendMessageCommand({
+      QueueUrl: this.queueUrl,
+      MessageBody: JSON.stringify(notification),
+      MessageGroupId: notification.type,
+      MessageDeduplicationId: notification.type,
+      MessageAttributes: {
+        notificationTo: {
+          DataType: 'String',
+          StringValue: notification.notificationTo,
+        },
+        type: {
+          DataType: 'String',
+          StringValue: notification.type,
+        },
+      },
+    })
 
-    const routingKeys =
-      notification.channel === 'both'
-        ? [`${baseRoutingKey}.email`, `${baseRoutingKey}.push`]
-        : [`${baseRoutingKey}.${notification.channel}`]
+    await this.sqs.send(command)
+  }
 
-    for (const routingKey of routingKeys) {
-      let attempt = 0
+  async send_message(notification: Notification, retries = 3) {
+    let attempt = 0
 
-      while (attempt < retries) {
-        try {
-          await this.publishNotification(notification, routingKey)
-          break
-        } catch (error) {
-          attempt++
+    while (attempt < retries) {
+      try {
+        await this.sendMessage(notification)
+        break
+      } catch (error) {
+        attempt++
+        console.error(`Error sending notification, attempt ${attempt}:`, error)
+        if (attempt < retries) {
+          await new Promise((resolve) => setTimeout(resolve, 1000))
+        } else {
           console.error(
-            `Error sending notification via ${routingKey}, attempt ${attempt}:`,
-            error,
+            `Failed to send notification after ${retries} retries:`,
+            notification,
           )
-          if (attempt < retries) {
-            await new Promise((resolve) => setTimeout(resolve, 1000))
-          } else {
-            console.error(
-              `Failed to send notification after ${retries} retries via ${routingKey}:`,
-              notification,
-            )
-          }
         }
       }
-    }
-  }
-
-  async close() {
-    try {
-      await this.channel?.close()
-      await this.connection?.close()
-      console.log('RabbitMQ connection closed.')
-    } catch (error) {
-      console.error('Error closing RabbitMQ connection:', error)
     }
   }
 }

@@ -2,6 +2,7 @@ import fastifyCors from '@fastify/cors'
 import fastifyJwt from '@fastify/jwt'
 import fastifySwagger from '@fastify/swagger'
 import fastifySwaggerUI from '@fastify/swagger-ui'
+import fastifyWebsocket from '@fastify/websocket'
 import fastify from 'fastify'
 import {
   jsonSchemaTransform,
@@ -45,6 +46,7 @@ import { voteOnPollRoute } from './routes/polls/vote-on-poll'
 import { getProfileRoute } from './routes/profile/get-profile'
 import { getUserProfileRoute } from './routes/profile/get-user-profile'
 import { updateProfileRoute } from './routes/profile/update-profile'
+import { notificationsWs } from './ws/notifications'
 
 const app = fastify({
   logger: {
@@ -68,6 +70,9 @@ app.register(fastifySwagger, {
     servers: [
       {
         url: `http://localhost:${env.BACKEND_PORT}`,
+      },
+      {
+        url: `ws://localhost:${env.BACKEND_PORT}`,
       },
     ],
     info: {
@@ -97,6 +102,10 @@ app.register(fastifyJwt, {
 })
 
 app.register(fastifyCors) // any front-end can access this API
+
+app.register(fastifyWebsocket)
+
+app.register(notificationsWs)
 
 app.register(registerAccountRoute)
 app.register(authenticateWithPasswordRoute)

@@ -11,7 +11,7 @@ A platform for managing condominiums and buildings, including features such as c
 - [x] It should be possible to create and manage votes within the condominium
 - [x] It should be possible for residents to participate in votes
 - [ ] It should be possible for the user to notifications - partially done (front-end is missing)
-- [ ] It should be possible for the user to create and manage maintenance requests
+- [x] It should be possible for the user to create and manage maintenance requests
 - [ ] It should be possible for the condominium administrator to create and manage announcements and documents
 - [ ] It should be possible for the condominium administrator to register and manage employees
 - [ ] It should be possible for the administrator to generate financial reports of the condominium
@@ -25,7 +25,6 @@ A platform for managing condominiums and buildings, including features such as c
 - [x] A user cannot reserve more than one common area at the same time
 - [x] Polls can only be created by administrators
 - [x] A user cannot vote more than once in a voting session
-- [ ] Maintenance requests must be validated and prioritized by the administrator
 - [ ] The administrator can manage shared announcements and documents
 - [ ] The administrator can register and remove condominium employees
 - [ ] The creation of visitors must be validated by the responsible resident

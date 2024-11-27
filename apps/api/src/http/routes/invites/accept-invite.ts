@@ -12,7 +12,7 @@ import {
 } from '@/db/schemas'
 import { BadRequestError } from '@/http/_errors/bad-request-errors'
 import { auth } from '@/http/middlewares/auth'
-import { sendNotification } from '@/notifications'
+import { notifications } from '@/utils/notifications-pub-sub'
 
 export async function acceptInviteRoute(app: FastifyInstance) {
   app
@@ -72,9 +72,9 @@ export async function acceptInviteRoute(app: FastifyInstance) {
           await tx.delete(invites).where(eq(invites.id, inviteId))
         })
 
-        await sendNotification({
+        await notifications.publish({
           type: 'INVITE_ACCEPTED',
-          notificationTo: 'USER',
+          notificationTo: 'user',
           data: {
             inviteId,
             condominiumId: invite.condominiumId,

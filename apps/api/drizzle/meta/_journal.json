@@ -85,6 +85,13 @@
       "when": 1732634463215,
       "tag": "20241126152103_add-maintenance-request-db-structure",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1732676493645,
+      "tag": "20241127030133_add-status-to-maintenance-request",
+      "breakpoints": true
     }
   ]
 }

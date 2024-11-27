@@ -7,8 +7,8 @@ import { db } from '@/db'
 import { bookings, commonSpaces } from '@/db/schemas'
 import { BadRequestError } from '@/http/_errors/bad-request-errors'
 import { auth } from '@/http/middlewares/auth'
-import { sendNotification } from '@/notifications'
 import { CACHE_KEYS, getCache, invalidateCache, setCache } from '@/redis'
+import { notifications } from '@/utils/notifications-pub-sub'
 
 export async function revokeBookingRoute(app: FastifyInstance) {
   app
@@ -80,9 +80,9 @@ export async function revokeBookingRoute(app: FastifyInstance) {
 
         await invalidateCache(CACHE_KEYS.booking(userId, deletedBooking.id))
 
-        await sendNotification({
+        await notifications.publish({
           type: 'BOOKING_REVOKED',
-          notificationTo: 'USER',
+          notificationTo: 'user',
           data: {
             bookingId: deletedBooking.id,
             condominiumId: deletedBooking.condominiumId,
@@ -90,7 +90,7 @@ export async function revokeBookingRoute(app: FastifyInstance) {
             commonSpaceName: booking[0].common_spaces.name,
             bookingTime: deletedBooking.date,
           },
-          channel: 'both',
+          channel: 'all',
         })
 
         return res.status(200).send({
