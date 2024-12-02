@@ -24,6 +24,7 @@ export async function authenticateWithPasswordRoute(app: FastifyInstance) {
         }),
         response: {
           200: z.object({
+            message: z.literal('User successfully authenticated'),
             token: z.string(),
           }),
           400: z.object({
@@ -54,7 +55,10 @@ export async function authenticateWithPasswordRoute(app: FastifyInstance) {
         .setIssuedAt()
         .sign(secret)
 
-      return res.status(200).send({ token })
+      return res.status(200).send({
+        message: 'User successfully authenticated',
+        token,
+      })
     },
   )
 }

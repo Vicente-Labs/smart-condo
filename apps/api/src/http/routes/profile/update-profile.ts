@@ -23,7 +23,7 @@ export async function updateProfileRoute(app: FastifyInstance) {
           body: z.object({
             name: z.string().min(2).max(100),
             email: z.string().email(),
-            phone: z.string(),
+            phone: z.string().min(11).max(11),
             bio: z.string().optional(),
             avatarUrl: z.string().optional(),
           }),
@@ -32,7 +32,16 @@ export async function updateProfileRoute(app: FastifyInstance) {
               message: z.literal('Profile updated successfully'),
             }),
             400: z.object({
-              message: z.literal('Email already in use'),
+              message: z.enum(['Email already in use', 'Validation error']),
+              errors: z
+                .object({
+                  name: z.array(z.string()).optional(),
+                  email: z.array(z.string()).optional(),
+                  phone: z.array(z.string()).optional(),
+                  bio: z.array(z.string()).optional(),
+                  avatarUrl: z.array(z.string()).optional(),
+                })
+                .optional(),
             }),
             401: z.object({
               message: z.literal('Invalid auth token'),
