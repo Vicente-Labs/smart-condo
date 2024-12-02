@@ -38,7 +38,7 @@ export async function updateCondominiumRoute(app: FastifyInstance) {
               message: z.string(),
             }),
             401: z.object({
-              message: z.tuple([
+              message: z.union([
                 z.literal('Invalid auth token'),
                 z.literal('You are not able to perform this action'),
               ]),

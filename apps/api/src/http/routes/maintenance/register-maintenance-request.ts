@@ -31,7 +31,7 @@ export async function registerMaintenanceRequestRoute(app: FastifyInstance) {
               message: z.literal('Maintenance request registered successfully'),
             }),
             401: z.object({
-              message: z.tuple([
+              message: z.union([
                 z.literal('Invalid auth token'),
                 z.literal('you are not a member of this condominium'),
               ]),

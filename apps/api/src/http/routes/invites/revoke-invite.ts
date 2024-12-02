@@ -31,7 +31,7 @@ export async function revokeInviteRoute(app: FastifyInstance) {
               message: z.literal('Invite revoked'),
             }),
             401: z.object({
-              message: z.tuple([
+              message: z.union([
                 z.literal('Invalid auth token'),
                 z.literal(`you're not allowed to revoke invites`),
               ]),

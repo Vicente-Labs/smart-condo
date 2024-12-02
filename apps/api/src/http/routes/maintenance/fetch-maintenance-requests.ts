@@ -51,7 +51,7 @@ export async function fetchMaintenanceRequestsRoute(app: FastifyInstance) {
               message: z.string(),
             }),
             401: z.object({
-              message: z.tuple([
+              message: z.union([
                 z.literal('Invalid auth token'),
                 z.literal('you are not a member of this condominium'),
               ]),

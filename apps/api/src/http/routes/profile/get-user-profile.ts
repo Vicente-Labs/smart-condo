@@ -41,7 +41,7 @@ export async function getUserProfileRoute(app: FastifyInstance) {
               message: z.literal('User not found.'),
             }),
             500: z.object({
-              message: z.tuple([
+              message: z.union([
                 z.literal('Internal server error.'),
                 z.string(),
               ]),

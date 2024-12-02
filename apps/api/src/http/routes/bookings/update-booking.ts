@@ -32,7 +32,7 @@ export async function updateBookingRoute(app: FastifyInstance) {
               message: z.literal('Booking updated successfully'),
             }),
             400: z.object({
-              message: z.tuple([
+              message: z.union([
                 z.literal('Invalid date'),
                 z.literal('Invalid estimated participants'),
                 z.literal('Booking not found'),

@@ -46,7 +46,7 @@ export async function getCondominiumRoute(app: FastifyInstance) {
               ),
             }),
             401: z.object({
-              message: z.tuple([
+              message: z.union([
                 z.literal('You are not allowed to access this condominium'),
                 z.literal('Invalid auth token'),
               ]),

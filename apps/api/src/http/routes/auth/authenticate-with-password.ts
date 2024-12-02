@@ -30,7 +30,7 @@ export async function authenticateWithPasswordRoute(app: FastifyInstance) {
             message: z.literal('Invalid credentials.'),
           }),
           500: z.object({
-            message: z.tuple([z.literal('Internal server error.'), z.string()]),
+            message: z.union([z.literal('Internal server error.'), z.string()]),
           }),
         },
       },

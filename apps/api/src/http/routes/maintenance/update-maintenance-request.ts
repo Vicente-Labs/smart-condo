@@ -37,10 +37,10 @@ export async function updateMaintenanceRequestRoute(app: FastifyInstance) {
               message: z.literal('Maintenance request successfully updated'),
             }),
             400: z.object({
-              message: z.tuple([z.literal('Maintenance request not found')]),
+              message: z.union([z.literal('Maintenance request not found')]),
             }),
             401: z.object({
-              message: z.tuple([
+              message: z.union([
                 z.literal('Invalid auth token'),
                 z.literal('you are not a member of this condominium'),
                 z.literal(

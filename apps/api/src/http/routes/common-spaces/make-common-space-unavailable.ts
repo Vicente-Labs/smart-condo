@@ -33,7 +33,7 @@ export async function makeCommonSpaceUnavailableRoute(app: FastifyInstance) {
               message: z.literal('Common space not found'),
             }),
             401: z.object({
-              message: z.tuple([
+              message: z.union([
                 z.literal(
                   'You are not allowed to inactivate this common space',
                 ),

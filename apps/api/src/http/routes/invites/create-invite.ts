@@ -36,7 +36,7 @@ export async function createInviteRoute(app: FastifyInstance) {
               email: z.string().email(),
             }),
             401: z.object({
-              message: z.tuple([
+              message: z.union([
                 z.literal('Invalid auth token'),
                 z.literal(
                   `You're not allowed to invite users to this condominium`,

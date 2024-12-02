@@ -46,7 +46,7 @@ export async function fetchInvitesRoute(app: FastifyInstance) {
               invites: z.array(inviteSchema),
             }),
             401: z.object({
-              message: z.tuple([
+              message: z.union([
                 z.literal('Invalid auth token'),
                 z.literal(`You're not allowed to get group invites`),
               ]),
